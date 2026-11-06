@@ -10,7 +10,6 @@
 :root{
   --bg:#04050a;--bg2:#080c14;--bg3:#0d1220;--card:#0a0e1a;
   --bat:#f0c030;--bat2:#ffd84a;--bat3:#c9a020;
-  --red:#cc2200;--blue:#1a3a6a;--steel:#2a3555;
   --text:#d8dde8;--muted:#5a6480;--border:rgba(240,192,48,0.08);
   --radius:10px;--ease:cubic-bezier(0.4,0,0.2,1);
 }
@@ -61,8 +60,6 @@ body > *{position:relative;z-index:1}
 .stat-label{font-size:9px;color:var(--muted);letter-spacing:2px;text-transform:uppercase;margin-top:3px;font-family:'Oswald',sans-serif}
 .hero-actions{display:flex;gap:10px;flex-wrap:wrap}
 
-/* CATEGORY BADGE COLORS */
-.cat-badge{display:inline-block;font-size:9px;font-weight:700;letter-spacing:1px;text-transform:uppercase;padding:3px 10px;border-radius:4px;background:rgba(255,255,255,0.08);color:#fff}
 
 /* CONTROLS */
 .controls{position:sticky;top:62px;z-index:100;background:rgba(4,5,10,0.95);backdrop-filter:blur(20px);border-bottom:1px solid rgba(240,192,48,0.08);padding:10px 2rem;display:flex;gap:8px;flex-wrap:wrap;align-items:center}
@@ -165,10 +162,6 @@ body > *{position:relative;z-index:1}
 .modal-actions .btn{flex:1;justify-content:center;padding:11px 16px}
 
 /* STAR RATING INPUT */
-.star-rating-input{display:flex;gap:4px;align-items:center;flex-wrap:wrap}
-.star-rating-input label{font-size:22px;cursor:pointer;color:var(--muted);transition:color 0.15s;line-height:1}
-.star-rating-input input[type=radio]{display:none}
-.star-rating-input label:hover,.star-rating-input label:hover ~ label{color:var(--bat)}
 .star-rating-wrap{display:flex;flex-direction:row-reverse;gap:3px}
 .star-rating-wrap input[type=radio]{display:none}
 .star-rating-wrap label{font-size:20px;cursor:pointer;color:var(--muted);transition:color 0.15s;line-height:1}
@@ -198,7 +191,6 @@ body > *{position:relative;z-index:1}
 .add-ep-btn{padding:7px 14px;border-radius:6px;background:var(--bg3);border:1px solid rgba(240,192,48,0.2);color:var(--bat);font-size:12px;cursor:pointer;font-family:'Rajdhani',sans-serif;font-weight:700;transition:all 0.15s;letter-spacing:1px}
 .add-ep-btn:hover{background:rgba(240,192,48,0.1)}
 /* Episode list on detail page */
-.detail-ep-list{display:flex;flex-direction:column;gap:8px;margin-top:10px}
 .detail-ep-item{background:var(--bg3);border-radius:8px;padding:11px 14px;border:1px solid rgba(240,192,48,0.08);display:flex;flex-direction:column;gap:6px}
 .detail-ep-header{display:flex;align-items:center;gap:10px}
 .detail-ep-num{font-size:11px;font-weight:700;color:var(--bat);font-family:'Oswald',sans-serif;min-width:30px}
@@ -648,12 +640,12 @@ body > *{position:relative;z-index:1}
       <div class="detail-story-text" id="detail-story-text"></div>
     </div>
     <div id="detail-description" style="display:none" class="detail-notes"></div>
-    <div id="detail-notes-wrap" style="display:none" class="detail-notes" style="margin-top:10px;border-top:1px solid var(--border);padding-top:10px"></div>
+    <div id="detail-notes-wrap" style="display:none;margin-top:10px;border-top:1px solid var(--border);padding-top:10px" class="detail-notes"></div>
     <div class="detail-info-grid" id="detail-info-grid"></div>
     <div class="detail-links-block" id="detail-links-block"></div>
     <div id="detail-ep-block" style="display:none;margin-bottom:18px"></div>
     <div class="detail-actions-row" style="margin-bottom:16px">
-      <button class="detail-play-btn" id="detail-play-btn" onclick="detailToggleWatched()">✓ Mark Watched</button>
+      <button class="detail-play-btn admin-only" id="detail-play-btn" style="display:none" onclick="detailToggleWatched()">✓ Mark Watched</button>
       <button class="detail-action-btn edit-btn admin-only" onclick="requireAdmin(detailEditItem)" style="display:none">✏ Edit</button>
       <button class="detail-action-btn danger-btn admin-only" onclick="requireAdmin(detailDeleteItem)" style="display:none">🗑 Delete</button>
     </div>
@@ -686,8 +678,9 @@ body > *{position:relative;z-index:1}
 <div class="confirm-backdrop" id="admin-modal" style="display:none">
   <div class="confirm-box" onclick="event.stopPropagation()" style="max-width:320px">
     <h3>🔐 Admin Access</h3>
-    <p style="color:var(--muted);font-size:13px;margin-bottom:14px">Enter admin password to make changes</p>
-    <input type="password" id="admin-password-input" class="form-input" placeholder="Enter password…" style="width:100%;margin-bottom:12px" onkeydown="if(event.key==='Enter')checkAdminPassword()">
+    <p id="admin-modal-text" style="color:var(--muted);font-size:13px;margin-bottom:14px">Enter admin password to make changes</p>
+    <input type="email" id="admin-email-input" class="form-input" placeholder="Admin email" autocomplete="username" style="width:100%;margin-bottom:8px;display:none" onkeydown="if(event.key==='Enter')document.getElementById('admin-password-input').focus()">
+    <input type="password" id="admin-password-input" class="form-input" placeholder="Enter password…" autocomplete="current-password" style="width:100%;margin-bottom:12px" onkeydown="if(event.key==='Enter')checkAdminPassword()">
     <div id="admin-error" style="color:#ff5533;font-size:12px;margin-bottom:10px;display:none">❌ Wrong password!</div>
     <div class="confirm-actions">
       <button class="btn btn-ghost" style="flex:1;justify-content:center" onclick="closeAdminModal()">Cancel</button>
@@ -698,7 +691,6 @@ body > *{position:relative;z-index:1}
 
 <!-- TOAST -->
 <div class="toast" id="toast"></div>
-<div id="sync-status" style="position:fixed;bottom:70px;left:50%;transform:translateX(-50%);background:rgba(10,12,20,0.92);color:var(--bat);font-size:11px;font-family:'Oswald',sans-serif;letter-spacing:1.5px;padding:6px 16px;border-radius:20px;border:1px solid rgba(240,192,48,0.2);z-index:9999;opacity:0;transition:opacity 0.4s;pointer-events:none"></div>
 
 <script>
 // ── DATA ──
@@ -723,30 +715,104 @@ const PALETTES = [
   ['#060d0d','#0c1c1e'],['#0a0d06','#141c0a'],['#06060d','#0c0c1c']
 ];
 
-// ── ADMIN PASSWORD ──
-const ADMIN_PASSWORD = 'Adolfhitler'; // Change this to your own password
+// ── SHARED DATABASE (Supabase) ──
+// Paste your Project URL and public anon key here. Leave empty for local-only mode.
+const SUPABASE_URL      = 'https://jyrdhmioqvxojacllyqg.supabase.co';
+const SUPABASE_ANON_KEY = 'sb_publishable_AYT5GqqlaEIEgQHIXwOp4A_hlpBbepr';
+const CLOUD = !!(SUPABASE_URL && SUPABASE_ANON_KEY);
+let session = null;
+
+function sbHeaders(auth) {
+  const h = { 'Content-Type': 'application/json', 'apikey': SUPABASE_ANON_KEY };
+  if (auth && session) h['Authorization'] = 'Bearer ' + session.access_token;
+  return h;
+}
+async function sbRequest(path, options = {}, auth = false) {
+  if (auth) await ensureSession();
+  const res = await fetch(SUPABASE_URL + path, { ...options, headers: { ...sbHeaders(auth), ...(options.headers || {}) } });
+  if (!res.ok) {
+    const err = new Error((await res.text()) || res.statusText);
+    err.status = res.status;
+    throw err;
+  }
+  return res.status === 204 ? null : res.json().catch(() => null);
+}
+function saveSession(d) {
+  session = { access_token: d.access_token, refresh_token: d.refresh_token, expires_at: Date.now() + (d.expires_in || 3600) * 1000 };
+  try { localStorage.setItem('gs_session', JSON.stringify(session)); } catch (e) {}
+}
+function clearSession() {
+  session = null;
+  try { localStorage.removeItem('gs_session'); } catch (e) {}
+}
+async function authRequest(grant, body) {
+  const res = await fetch(`${SUPABASE_URL}/auth/v1/token?grant_type=${grant}`, { method: 'POST', headers: sbHeaders(false), body: JSON.stringify(body) });
+  const d = await res.json().catch(() => ({}));
+  if (!res.ok) throw new Error(d.error_description || d.msg || 'Sign-in failed');
+  saveSession(d);
+  return d;
+}
+async function ensureSession() {
+  if (!session) throw Object.assign(new Error('Not signed in'), { status: 401 });
+  if (Date.now() > session.expires_at - 60000) {
+    try { await authRequest('refresh_token', { refresh_token: session.refresh_token }); }
+    catch (e) { clearSession(); isAdmin = false; updateAdminUI(); throw Object.assign(e, { status: 401 }); }
+  }
+}
+async function cloudLoad() {
+  const rows = await sbRequest('/rest/v1/movies?select=id,data&order=id.asc');
+  return (rows || []).map(r => ({ ...r.data, id: r.id }));
+}
+async function cloudSave(list) {
+  const rows = list.map(({ id, ...data }) => ({ id, data, updated_at: new Date().toISOString() }));
+  await sbRequest('/rest/v1/movies?on_conflict=id', {
+    method: 'POST',
+    headers: { 'Prefer': 'resolution=merge-duplicates,return=minimal' },
+    body: JSON.stringify(rows)
+  }, true);
+}
+async function cloudDelete(id) {
+  await sbRequest(`/rest/v1/movies?id=eq.${encodeURIComponent(id)}`, { method: 'DELETE' }, true);
+}
+
+// ── ADMIN ──
+// Cloud mode signs in with your Supabase account; this password is only used in local-only mode.
+const ADMIN_PASSWORD = 'change-this-to-a-strong-password';
 let isAdmin = false;
 let pendingAdminAction = null;
 
 function requireAdmin(action) {
   if (isAdmin) { action(); return; }
   pendingAdminAction = action;
+  const emailEl = document.getElementById('admin-email-input');
+  const pwEl = document.getElementById('admin-password-input');
+  emailEl.style.display = CLOUD ? '' : 'none';
+  document.getElementById('admin-modal-text').textContent = CLOUD ? 'Sign in as admin to make changes' : 'Enter admin password to make changes';
   document.getElementById('admin-modal').style.display = 'flex';
-  document.getElementById('admin-password-input').value = '';
+  pwEl.value = '';
   document.getElementById('admin-error').style.display = 'none';
-  setTimeout(() => document.getElementById('admin-password-input').focus(), 100);
+  setTimeout(() => (CLOUD ? emailEl : pwEl).focus(), 100);
 }
-function checkAdminPassword() {
-  const val = document.getElementById('admin-password-input').value;
-  if (val === ADMIN_PASSWORD) {
+async function checkAdminPassword() {
+  const pwEl = document.getElementById('admin-password-input');
+  const errEl = document.getElementById('admin-error');
+  let ok = false, msg = '❌ Wrong password!';
+  if (CLOUD) {
+    try { await authRequest('password', { email: document.getElementById('admin-email-input').value.trim(), password: pwEl.value }); ok = true; }
+    catch (e) { msg = '❌ ' + (e.message || 'Sign-in failed'); }
+  } else {
+    ok = pwEl.value === ADMIN_PASSWORD;
+  }
+  if (ok) {
     isAdmin = true;
     document.getElementById('admin-modal').style.display = 'none';
     updateAdminUI();
     if (pendingAdminAction) { pendingAdminAction(); pendingAdminAction = null; }
   } else {
-    document.getElementById('admin-error').style.display = 'block';
-    document.getElementById('admin-password-input').value = '';
-    document.getElementById('admin-password-input').focus();
+    errEl.textContent = msg;
+    errEl.style.display = 'block';
+    pwEl.value = '';
+    pwEl.focus();
   }
 }
 function closeAdminModal() {
@@ -761,72 +827,53 @@ function updateAdminUI() {
   // Update lock button in navbar
   const lockBtn = document.getElementById('lock-btn');
   if (lockBtn) lockBtn.textContent = isAdmin ? '🔓 Admin' : '🔒 Admin';
+  // Re-draw cards so edit/delete/watched/poster controls match the mode
+  renderHome();
+  refreshCurrentPage(true);
 }
 function toggleAdmin() {
   if (isAdmin) {
     isAdmin = false;
+    clearSession();
     updateAdminUI();
     showToast('🔒 Locked – view only mode');
   } else {
     requireAdmin(() => showToast('🔓 Admin mode unlocked'));
   }
 }
-const SB_URL = 'https://cdyxravwjwqytsmzmmjt.supabase.co';
-const SB_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImNkeXhyYXZ3andxeXRzbXptbWp0Iiwicm9sZSI6InNlcnZpY2Vfcm9sZSIsImlhdCI6MTc4MDk3OTgyOSwiZXhwIjoyMDk2NTU1ODI5fQ.GKuTAH0FS6nipOxNKTzP4xMzT_M-xLkV_41TNidD_9s';
-const SB_HEADERS = {
-  'Content-Type':  'application/json',
-  'apikey':        SB_KEY,
-  'Authorization': 'Bearer ' + SB_KEY,
-  'Prefer':        'resolution=merge-duplicates'
-};
-
 let items = [];
 let detailId = null;
 let editId = null;
 let currentPage = 'home';
+function isCatPage(p) { return Object.prototype.hasOwnProperty.call(CATS, p); }
+function refreshCurrentPage(full) {
+  if (isCatPage(currentPage)) { full ? renderPage(currentPage) : buildGrid(currentPage); }
+  else if (currentPage === 'catalog') renderCatalog();
+}
 let previousPage = 'home';
 let sortStates = {};
 let tempEps = [];
 let tempModalLinks = [];
 let pendingDeleteId = null;
-let pendingDeleteCallback = null;
 let quickLinks = [];
-
-// ── SUPABASE HELPERS ──
-async function sbFetch(path, options={}) {
-  const res = await fetch(SB_URL + path, { headers: SB_HEADERS, ...options });
-  if (!res.ok) { const t = await res.text(); throw new Error(t); }
-  return res.status === 204 ? null : res.json();
-}
-async function sbLoadItems() {
-  const rows = await sbFetch('/rest/v1/movies?select=id,data&order=id.asc');
-  return (rows||[]).map(r => ({ id: r.id, ...r.data }));
-}
-async function sbSaveItem(item) {
-  const { id, ...data } = item;
-  await sbFetch('/rest/v1/movies', {
-    method: 'POST',
-    body: JSON.stringify({ id, data, updated_at: new Date().toISOString() })
-  });
-}
-async function sbDeleteItem(id) {
-  await sbFetch(`/rest/v1/movies?id=eq.${id}`, { method: 'DELETE' });
-}
-
-function showSyncStatus(msg) {
-  let el = document.getElementById('sync-status');
-  if (!el) return;
-  el.textContent = msg;
-  el.style.opacity = '1';
-  clearTimeout(el._t);
-  el._t = setTimeout(() => { el.style.opacity = '0'; }, 3000);
-}
 
 // ── LOAD ──
 async function load() {
-  showSyncStatus('⏳ Loading from cloud…');
-  try {
-    items = await sbLoadItems();
+  if (CLOUD) {
+    try {
+      const saved = JSON.parse(localStorage.getItem('gs_session') || 'null');
+      if (saved && saved.refresh_token) { session = saved; await ensureSession(); isAdmin = true; }
+    } catch (e) { clearSession(); }
+    try {
+      items = await cloudLoad();
+      try { localStorage.setItem('gs_items', JSON.stringify(items)); } catch (e) {}
+    } catch (e) {
+      console.error('Could not load shared list:', e);
+      try { items = JSON.parse(localStorage.getItem('gs_items') || '[]'); } catch (e2) { items = []; }
+      showToast('⚠ Could not reach the shared list');
+    }
+  } else {
+    try { items = JSON.parse(localStorage.getItem('gs_items') || '[]'); } catch (e) { items = []; }
     if (!items.length) {
       items = [
         { id:1,  category:'malayalam', title:'Manjummel Boys',  year:2024, genre:'Adventure', rating:5, watched:1, notes:'', story:'A group of friends embark on a daring rescue mission in the Guna caves.', description:'', director:'Chidambaram S. Poduval', protagonist:'Kuttan', antagonist:'', links:[] },
@@ -842,37 +889,21 @@ async function load() {
       ];
       await persist();
     }
-    showSyncStatus('✅ Synced with cloud');
-  } catch(e) {
-    console.error('Supabase load error:', e);
-    try { items = JSON.parse(localStorage.getItem('gs_items') || '[]'); } catch(e2) { items = []; }
-    showSyncStatus('⚠️ Offline – using local data');
   }
   try { quickLinks = JSON.parse(localStorage.getItem('gs_qlinks') || '[]'); } catch(e) { quickLinks = []; }
   try { document.getElementById('qp-desc').value = localStorage.getItem('gs_qdesc') || ''; } catch(e) {}
 }
 
-async function persist() {
-  localStorage.setItem('gs_items', JSON.stringify(items));
-  try {
-    showSyncStatus('⏳ Saving…');
-    await Promise.all(items.map(item => sbSaveItem(item)));
-    showSyncStatus('✅ Saved to cloud');
-  } catch(e) {
-    console.error('Supabase save error:', e);
-    showSyncStatus('⚠️ Saved locally only');
-  }
-}
-
-async function persistDelete(id) {
-  localStorage.setItem('gs_items', JSON.stringify(items));
-  try {
-    showSyncStatus('⏳ Deleting…');
-    await sbDeleteItem(id);
-    showSyncStatus('✅ Deleted from cloud');
-  } catch(e) {
-    console.error('Supabase delete error:', e);
-    showSyncStatus('⚠️ Deleted locally only');
+// Save to this browser, and (shared mode) upsert the changed items to the shared list.
+async function persist(changed) {
+  try { localStorage.setItem('gs_items', JSON.stringify(items)); }
+  catch (e) { if (!CLOUD) showToast('⚠ Could not save (storage full?)'); }
+  if (CLOUD && changed && changed.length) {
+    try { await cloudSave(changed); }
+    catch (e) {
+      console.error('Save failed:', e);
+      showToast(e.status === 401 ? '⚠ Session expired – sign in again' : '⚠ Could not save to the shared list');
+    }
   }
 }
 
@@ -898,6 +929,7 @@ function showPage(page) {
   if (page !== 'home' && page !== 'catalog') renderPage(page);
   else if (page === 'catalog') renderCatalog();
   else { renderHome(); renderQuickPanel(); }
+  if (page === 'home') document.getElementById('fab-home').classList.remove('visible');
 }
 
 // ── HOME ──
@@ -968,7 +1000,7 @@ function renderPage(cat) {
         <div class="hero-tag">${catInfo.emoji} &nbsp; ${catInfo.label} &nbsp; ${catInfo.emoji}</div>
         <h1 class="hero-title" style="font-size:clamp(44px,6vw,74px)">${catInfo.label}<br><span>Collection</span></h1>
         <div class="hero-actions" style="margin-top:18px">
-          <button class="btn btn-bat" onclick="openAddModal('${cat}')">+ Add ${cat==='series'?'Series':cat==='anime'?'Anime':'Movie'}</button>
+          <button class="btn btn-bat admin-only" style="display:${isAdmin?'':'none'}" onclick="openAddModal('${cat}')">+ Add ${cat==='series'?'Series':cat==='anime'?'Anime':'Movie'}</button>
         </div>
       </div>
     </section>
@@ -1039,7 +1071,7 @@ function buildGrid(cat) {
   document.getElementById('cnt-'+cat).textContent = `${list.length} item${list.length!==1?'s':''}`;
   const catColor = CATS[cat].color;
   if (!list.length) {
-    gridEl.innerHTML = `<div class="empty-state"><span class="empty-icon">${CATS[cat].emoji}</span><h3>Nothing here yet</h3><p>Add your first ${cat==='series'?'series':cat==='anime'?'anime':'movie'} to get started.</p><button class="btn btn-bat" onclick="openAddModal('${cat}')">+ Add Now</button></div>`;
+    gridEl.innerHTML = `<div class="empty-state"><span class="empty-icon">${CATS[cat].emoji}</span><h3>Nothing here yet</h3><p>${isAdmin?`Add your first ${cat==='series'?'series':cat==='anime'?'anime':'movie'} to get started.`:'Nothing has been added yet.'}</p><button class="btn btn-bat admin-only" style="display:${isAdmin?'':'none'}" onclick="openAddModal('${cat}')">+ Add Now</button></div>`;
     return;
   }
   if (cat === 'series') {
@@ -1063,10 +1095,10 @@ function movieCard(m, i, catColor) {
       <div class="play-overlay"><div class="play-circle">▶</div></div>
       ${m.watched?'<div class="watched-badge">Watched</div>':''}
       <div class="lang-badge" style="background:${catColor}88">${CATS[m.category].emoji}</div>
-      <label class="thumb-upload-btn" onclick="event.stopPropagation()" title="Change thumbnail">
+      ${isAdmin?`<label class="thumb-upload-btn" onclick="event.stopPropagation()" title="Change thumbnail">
         📷 POSTER
         <input type="file" class="thumb-input" accept="image/*" onchange="changeThumbInline(event,${m.id})">
-      </label>
+      </label>`:''}
     </div>
     <div class="card-body">
       <div class="card-title" title="${m.title}">${m.title}</div>
@@ -1075,11 +1107,11 @@ function movieCard(m, i, catColor) {
         ${m.genre?`<span class="card-genre">${m.genre}</span>`:''}
       </div>
       ${ratingDisplay}
-      <div class="card-actions" onclick="event.stopPropagation()">
-        ${isAdmin?`<button class="card-btn" onclick="editItem(${m.id})">✏ Edit</button>`:''}
+      ${isAdmin?`<div class="card-actions" onclick="event.stopPropagation()">
+        <button class="card-btn" onclick="editItem(${m.id})">✏ Edit</button>
         <button class="card-btn" onclick="toggleWatched(${m.id})">${m.watched?'↩':'✓'}</button>
-        ${isAdmin?`<button class="card-btn danger" onclick="confirmDelete(${m.id},'${m.title.replace(/'/g,"\\'")}')">🗑</button>`:''}
-      </div>
+        <button class="card-btn danger" onclick="confirmDelete(${m.id},'${m.title.replace(/'/g,"\\'")}')">🗑</button>
+      </div>`:''}
     </div>
   </div>`;
 }
@@ -1096,10 +1128,10 @@ function seriesCard(m, i, catColor) {
       ${bannerContent}
       <div class="play-overlay"><div class="play-circle">▶</div></div>
       ${m.watched?'<div class="watched-badge">Watched</div>':''}
-      <label class="thumb-upload-btn" onclick="event.stopPropagation()">
+      ${isAdmin?`<label class="thumb-upload-btn" onclick="event.stopPropagation()">
         📷 POSTER
         <input type="file" class="thumb-input" accept="image/*" onchange="changeThumbInline(event,${m.id})">
-      </label>
+      </label>`:''}
     </div>
     <div class="series-body">
       <div class="series-title" title="${m.title}">${m.title}</div>
@@ -1111,11 +1143,11 @@ function seriesCard(m, i, catColor) {
       </div>
       <div class="series-eps">${epCount} episode${epCount!==1?'s':''}</div>
       ${m.rating?`<div class="card-stars" style="margin-top:6px">${'★'.repeat(m.rating)}${'☆'.repeat(10-m.rating)}</div>`:''}
-      <div class="series-actions" onclick="event.stopPropagation()">
-        ${isAdmin?`<button class="card-btn" onclick="editItem(${m.id})">✏ Edit</button>`:''}
+      ${isAdmin?`<div class="series-actions" onclick="event.stopPropagation()">
+        <button class="card-btn" onclick="editItem(${m.id})">✏ Edit</button>
         <button class="card-btn" onclick="toggleWatched(${m.id})">${m.watched?'↩ Unwatch':'✓ Watched'}</button>
-        ${isAdmin?`<button class="card-btn danger" onclick="confirmDelete(${m.id},'${m.title.replace(/'/g,"\\'")}')">🗑</button>`:''}
-      </div>
+        <button class="card-btn danger" onclick="confirmDelete(${m.id},'${m.title.replace(/'/g,"\\'")}')">🗑</button>
+      </div>`:''}
     </div>
   </div>`;
 }
@@ -1130,15 +1162,85 @@ function previewThumb(input) {
   const cat = document.getElementById('f-category').value;
   document.getElementById('thumb-preview-wrap').classList.toggle('series-ratio', cat === 'series');
 }
-function changeThumbInline(event, id) {
+// Shrink uploaded posters so the shared list stays small and fast to load.
+function readImageResized(file, maxW = 800) {
+  return new Promise((resolve, reject) => {
+    const fr = new FileReader();
+    fr.onerror = () => reject(fr.error);
+    fr.onload = () => {
+      const img = new Image();
+      img.onerror = () => resolve(fr.result);
+      img.onload = () => {
+        try {
+          const scale = Math.min(1, maxW / img.width);
+          const c = document.createElement('canvas');
+          c.width = Math.round(img.width * scale);
+          c.height = Math.round(img.height * scale);
+          c.getContext('2d').drawImage(img, 0, 0, c.width, c.height);
+          resolve(c.toDataURL('image/jpeg', 0.82));
+        } catch (e) { resolve(fr.result); }
+      };
+      img.src = fr.result;
+    };
+    fr.readAsDataURL(file);
+  });
+}
+// ── POSTER STORAGE (Supabase Storage bucket "posters") ──
+function resizeToBlob(file, maxW = 800) {
+  return new Promise((resolve, reject) => {
+    const url = URL.createObjectURL(file);
+    const img = new Image();
+    img.onerror = () => { URL.revokeObjectURL(url); reject(new Error('That file is not a valid image')); };
+    img.onload = () => {
+      const scale = Math.min(1, maxW / img.width);
+      const c = document.createElement('canvas');
+      c.width = Math.round(img.width * scale);
+      c.height = Math.round(img.height * scale);
+      c.getContext('2d').drawImage(img, 0, 0, c.width, c.height);
+      URL.revokeObjectURL(url);
+      c.toBlob(b => b ? resolve(b) : reject(new Error('Could not process image')), 'image/jpeg', 0.82);
+    };
+    img.src = url;
+  });
+}
+// Cloud mode: uploads to Storage and returns a public URL. Local mode: returns an embedded data URL.
+async function uploadPoster(file) {
+  if (!CLOUD) return readImageResized(file);
+  const blob = await resizeToBlob(file);
+  const name = Date.now() + '-' + Math.random().toString(36).slice(2, 8) + '.jpg';
+  await ensureSession();
+  const res = await fetch(`${SUPABASE_URL}/storage/v1/object/posters/${name}`, {
+    method: 'POST',
+    headers: { 'apikey': SUPABASE_ANON_KEY, 'Authorization': 'Bearer ' + session.access_token, 'Content-Type': 'image/jpeg' },
+    body: blob
+  });
+  if (!res.ok) throw new Error((await res.text()) || 'Upload failed');
+  return `${SUPABASE_URL}/storage/v1/object/public/posters/${name}`;
+}
+// Best-effort cleanup of an old poster file so the bucket doesn't fill up.
+async function deletePosterFile(url) {
+  if (!CLOUD || !url || !url.startsWith(SUPABASE_URL + '/storage/v1/object/public/posters/')) return;
+  try {
+    await ensureSession();
+    const name = url.split('/posters/')[1];
+    await fetch(`${SUPABASE_URL}/storage/v1/object/posters/${name}`, {
+      method: 'DELETE',
+      headers: { 'apikey': SUPABASE_ANON_KEY, 'Authorization': 'Bearer ' + session.access_token }
+    });
+  } catch (e) { console.warn('Poster cleanup skipped:', e); }
+}
+async function changeThumbInline(event, id) {
   event.stopPropagation();
+  if (!isAdmin) return;
   const file = event.target.files[0]; if (!file) return;
-  const reader = new FileReader();
-  reader.onload = function(e) {
-    const m = items.find(x => x.id === id);
-    if (m) { m.thumbData = e.target.result; persist(); if (currentPage !== 'home') buildGrid(currentPage); renderHome(); showToast('🦇 Poster updated!'); }
-  };
-  reader.readAsDataURL(file);
+  const m = items.find(x => x.id === id); if (!m) return;
+  try {
+    showToast('⏳ Uploading poster...');
+    const oldThumb = m.thumbData;
+    m.thumbData = await uploadPoster(file);
+    persist([m]); refreshCurrentPage(false); renderHome(); showToast('🦇 Poster updated!');
+    if (oldThumb && oldThumb !== m.thumbData) deletePosterFile(oldThumb);
+  } catch (e) { console.error(e); showToast('⚠ Upload failed: ' + (e.message || 'try again')); }
 }
 function resetThumbPreview() {
   const img = document.getElementById('thumb-preview-img');
@@ -1194,7 +1296,8 @@ function onCategoryChange() {
   const cat = document.getElementById('f-category').value;
   document.getElementById('series-group').style.display = (cat==='series'||cat==='anime') ? 'block' : 'none';
 }
-function openAddModal(precat) {
+function openAddModal(precat) { requireAdmin(() => _openAddModal(precat)); }
+function _openAddModal(precat) {
   editId = null; tempEps = []; tempModalLinks = [];
   document.getElementById('modal-heading').textContent = 'Add to Vault';
   ['f-title','f-year','f-notes','f-director','f-protagonist','f-antagonist','f-story','f-description','f-link-url','f-link-label','f-download-url','f-copy-link'].forEach(id => { const el=document.getElementById(id); if(el) el.value=''; });
@@ -1203,7 +1306,7 @@ function openAddModal(precat) {
   document.getElementById('f-watched').value = 0;
   document.getElementById('f-seasons').value = 1;
   document.getElementById('f-status').value = 'ongoing';
-  document.getElementById('f-category').value = (precat || (currentPage !== 'home' ? currentPage : 'malayalam'));
+  document.getElementById('f-category').value = (precat || (isCatPage(currentPage) ? currentPage : 'malayalam'));
   renderEpList(); renderModalLinks(); onCategoryChange();
   resetThumbPreview();
   document.getElementById('add-modal').classList.add('open');
@@ -1240,6 +1343,7 @@ function editItem(id) {
 function closeModal() { document.getElementById('add-modal').classList.remove('open'); }
 
 function saveItem() {
+  if (!isAdmin) { requireAdmin(saveItem); return; }
   const title = document.getElementById('f-title').value.trim();
   if (!title) { showToast('Please enter a title!'); return; }
   const cat = document.getElementById('f-category').value;
@@ -1267,23 +1371,25 @@ function saveItem() {
   };
   const doSave = (thumbData) => {
     if (thumbData) data.thumbData = thumbData;
+    let saved;
     if (editId) {
       const idx = items.findIndex(m=>m.id===editId);
       const existing = items[idx];
+      if (thumbData && existing.thumbData && existing.thumbData !== thumbData) deletePosterFile(existing.thumbData);
       if (!thumbData && existing.thumbData) data.thumbData = existing.thumbData;
-      items[idx] = {...existing, ...data};
+      saved = items[idx] = {...existing, ...data};
     } else {
-      items.push({id:Date.now(), ...data});
+      saved = {id: Date.now() * 1000 + Math.floor(Math.random() * 1000), ...data};
+      items.push(saved);
     }
-    persist(); closeModal();
-    if (currentPage !== 'home') renderPage(currentPage);
+    persist([saved]); closeModal();
+    refreshCurrentPage(true);
     renderHome();
     showToast(editId ? '🦇 Updated!' : '🦇 Added to vault!');
   };
   if (thumbFile) {
-    const reader = new FileReader();
-    reader.onload = e => doSave(e.target.result);
-    reader.readAsDataURL(thumbFile);
+    showToast('⏳ Uploading poster...');
+    uploadPoster(thumbFile).then(doSave).catch(e => { console.error(e); showToast('⚠ Upload failed: ' + (e.message || 'try again')); });
   } else { doSave(null); }
 }
 
@@ -1336,10 +1442,11 @@ function renderEpList() {
 
 // ── WATCH TOGGLE ──
 function toggleWatched(id) {
+  if (!isAdmin) { requireAdmin(() => toggleWatched(id)); return; }
   const m = items.find(x=>x.id===id); if (!m) return;
   m.watched = m.watched ? 0 : 1;
-  persist();
-  if (currentPage !== 'home') buildGrid(currentPage);
+  persist([m]);
+  refreshCurrentPage(false);
   renderHome();
   showToast(m.watched ? '🦇 Marked watched!' : '↩ Marked unwatched');
 }
@@ -1355,12 +1462,18 @@ function closeConfirm() {
   document.getElementById('confirm-dialog').classList.remove('open');
   pendingDeleteId = null;
 }
-function deleteItem(id) {
+async function deleteItem(id) {
+  const gone = items.find(x=>x.id===id);
+  if (gone && gone.thumbData) deletePosterFile(gone.thumbData);
   items = items.filter(x=>x.id!==id);
-  persistDelete(id);
-  if (currentPage !== 'home') renderPage(currentPage);
+  persist([]);
+  refreshCurrentPage(true);
   renderHome();
   showToast('🗑 Removed from vault');
+  if (CLOUD) {
+    try { await cloudDelete(id); }
+    catch (e) { console.error('Delete failed:', e); showToast('⚠ Could not delete from the shared list'); }
+  }
 }
 
 // ── DETAIL PAGE ──
@@ -1418,7 +1531,7 @@ function openDetailPage(id) {
   const linksBlock = document.getElementById('detail-links-block');
   const links = m.links||[];
   linksBlock.innerHTML = links.length
-    ? links.map(l=>`<a class="detail-link-chip" href="${l.url}" target="_blank" rel="noopener">🔗 ${l.label||l.url}</a>`).join('')
+    ? links.map(l=>`<a class="detail-link-chip" href="${safeUrl(l.url)}" target="_blank" rel="noopener">🔗 ${l.label||l.url}</a>`).join('')
     : '';
   // Episodes (series & anime)
   const epBlock = document.getElementById('detail-ep-block');
@@ -1429,7 +1542,7 @@ function openDetailPage(id) {
       episodes.map((ep,i) => {
         const stars = ep.rating ? ('★'.repeat(ep.rating)+'☆'.repeat(5-ep.rating)) : '☆☆☆☆☆';
         const dlBtn = ep.downloadUrl
-          ? `<a class="detail-ep-btn detail-ep-dl" href="${ep.downloadUrl}" target="_blank" rel="noopener">⬇ Download</a>` : '';
+          ? `<a class="detail-ep-btn detail-ep-dl" href="${safeUrl(ep.downloadUrl)}" target="_blank" rel="noopener">⬇ Download</a>` : '';
         const cpBtn = ep.copyLink
           ? `<button class="detail-ep-btn detail-ep-copy" onclick="epCopyLink('${ep.copyLink.replace(/'/g,"\\'")}',this)">🔗 Copy Link</button>` : '';
         const actions = (dlBtn||cpBtn) ? `<div class="detail-ep-actions">${dlBtn}${cpBtn}</div>` : '';
@@ -1459,7 +1572,7 @@ function openDetailPage(id) {
   const hasCopyLink = m.copyLink && m.copyLink.trim();
   if (hasDownload || hasCopyLink) {
     dlRow.style.display = 'flex';
-    if (hasDownload) { dlBtn.href = m.downloadUrl; dlBtn.style.display = 'inline-flex'; }
+    if (hasDownload) { dlBtn.href = safeUrl(m.downloadUrl); dlBtn.style.display = 'inline-flex'; }
     else { dlBtn.style.display = 'none'; }
     if (hasCopyLink) { cpBtn.dataset.link = m.copyLink; cpBtn.style.display = 'inline-flex'; }
     else { cpBtn.style.display = 'none'; }
@@ -1640,17 +1753,9 @@ function showToast(msg) {
   }, { passive: true });
 })();
 
-// Hide fab when on home page (showPage already handles active state)
-const _origShowPage = showPage;
-showPage = function(page) {
-  _origShowPage(page);
-  const fab = document.getElementById('fab-home');
-  if (page === 'home') fab.classList.remove('visible');
-};
-
 // ── KEYBOARD ──
 document.addEventListener('keydown', e => {
-  if (e.key==='Escape') { closeDetailPage(); closeModal(); closeConfirm(); }
+  if (e.key==='Escape') { if (document.getElementById('detail-page').classList.contains('open')) closeDetailPage(); closeModal(); closeConfirm(); }
 });
 document.getElementById('add-modal').addEventListener('click', function(e) { if (e.target===this) closeModal(); });
 document.getElementById('confirm-dialog').addEventListener('click', function(e) { if (e.target===this) closeConfirm(); });
@@ -1659,6 +1764,14 @@ document.getElementById('confirm-dialog').addEventListener('click', function(e) 
 function hexToRgba(hex, alpha) {
   const r=parseInt(hex.slice(1,3),16), g=parseInt(hex.slice(3,5),16), b=parseInt(hex.slice(5,7),16);
   return `rgba(${r},${g},${b},${alpha})`;
+}
+function safeUrl(url) {
+  if (!url) return '#';
+  try {
+    const u = new URL(url);
+    if (u.protocol === 'http:' || u.protocol === 'https:') return url;
+  } catch(e) {}
+  return '#';
 }
 
 // ── EXPORT / IMPORT ──
@@ -1673,7 +1786,7 @@ function exportData() {
   const a    = document.createElement('a');
   const date = new Date().toISOString().slice(0,10);
   a.href     = url;
-  a.download = `gothamstream-backup-${date}.json`;
+  a.download = `jokerstream-backup-${date}.json`;
   a.click();
   URL.revokeObjectURL(url);
   showToast('🦇 Backup downloaded!');
@@ -1693,7 +1806,7 @@ function importData(input) {
       const importedIds = new Set(imported.map(x => x.id));
       const kept = items.filter(x => !importedIds.has(x.id));
       items = [...kept, ...imported];
-      persist();
+      persist(imported);
       renderHome();
       if (currentPage !== 'home' && currentPage !== 'catalog') renderPage(currentPage);
       if (currentPage === 'catalog') renderCatalog();
@@ -1711,6 +1824,7 @@ function importData(input) {
   await load();
   renderHome();
   renderQuickPanel();
+  if (isAdmin) updateAdminUI();
 })();
 </script>
 <!-- FLOATING HOME BUTTON -->
