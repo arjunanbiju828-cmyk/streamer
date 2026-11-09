@@ -381,7 +381,7 @@ body > *{position:relative;z-index:1}
   <div class="nav-right">
     <button class="btn btn-ghost admin-only" onclick="exportData()" title="Export all your movies as a backup file" style="display:none">💾 Export</button>
     <label class="btn btn-ghost admin-only" style="cursor:pointer;display:none" title="Import a previously exported backup">📂 Import<input type="file" accept=".json" style="display:none" onchange="importData(this)"></label>
-    <button class="btn btn-ghost" id="lock-btn" onclick="toggleAdmin()">🔒 Admin</button>
+    <button class="btn btn-ghost" id="lock-btn" style="display:none" onclick="toggleAdmin()">🔒 Admin</button>
     <button class="btn btn-bat admin-only" id="add-btn" onclick="openAddModal()" style="display:none">+ Add</button>
   </div>
 </nav>
@@ -602,14 +602,6 @@ body > *{position:relative;z-index:1}
     </div>
 
     <div class="form-group">
-      <label class="form-label">Watch Status</label>
-      <select id="f-watched" class="form-select">
-        <option value="0">Unwatched</option>
-        <option value="1">Watched</option>
-      </select>
-    </div>
-
-    <div class="form-group">
       <label class="form-label">Personal Notes</label>
       <textarea id="f-notes" class="form-textarea" placeholder="Your thoughts, quotes, opinions…"></textarea>
     </div>
@@ -645,7 +637,7 @@ body > *{position:relative;z-index:1}
     <div class="detail-links-block" id="detail-links-block"></div>
     <div id="detail-ep-block" style="display:none;margin-bottom:18px"></div>
     <div class="detail-actions-row" style="margin-bottom:16px">
-      <button class="detail-play-btn admin-only" id="detail-play-btn" style="display:none" onclick="detailToggleWatched()">✓ Mark Watched</button>
+      <button class="detail-play-btn" id="detail-play-btn" onclick="detailToggleWatched()">✓ Mark Watched</button>
       <button class="detail-action-btn edit-btn admin-only" onclick="requireAdmin(detailEditItem)" style="display:none">✏ Edit</button>
       <button class="detail-action-btn danger-btn admin-only" onclick="requireAdmin(detailDeleteItem)" style="display:none">🗑 Delete</button>
     </div>
@@ -764,7 +756,7 @@ async function cloudLoad() {
   return (rows || []).map(r => ({ ...r.data, id: r.id }));
 }
 async function cloudSave(list) {
-  const rows = list.map(({ id, ...data }) => ({ id, data, updated_at: new Date().toISOString() }));
+  const rows = list.map(({ id, watched, ...data }) => ({ id, data, updated_at: new Date().toISOString() }));
   await sbRequest('/rest/v1/movies?on_conflict=id', {
     method: 'POST',
     headers: { 'Prefer': 'resolution=merge-duplicates,return=minimal' },
@@ -827,10 +819,17 @@ function updateAdminUI() {
   // Update lock button in navbar
   const lockBtn = document.getElementById('lock-btn');
   if (lockBtn) lockBtn.textContent = isAdmin ? '🔓 Admin' : '🔒 Admin';
+  syncAdminButton();
   // Re-draw cards so edit/delete/watched/poster controls match the mode
   renderHome();
   refreshCurrentPage(true);
 }
+// The Admin button is hidden from visitors. It appears only on the private link  .../#admin
+function syncAdminButton() {
+  const lockBtn = document.getElementById('lock-btn');
+  if (lockBtn) lockBtn.style.display = (isAdmin || location.hash === '#admin') ? '' : 'none';
+}
+window.addEventListener('hashchange', syncAdminButton);
 function toggleAdmin() {
   if (isAdmin) {
     isAdmin = false;
@@ -890,6 +889,7 @@ async function load() {
       await persist();
     }
   }
+  applyMyWatched();
   try { quickLinks = JSON.parse(localStorage.getItem('gs_qlinks') || '[]'); } catch(e) { quickLinks = []; }
   try { document.getElementById('qp-desc').value = localStorage.getItem('gs_qdesc') || ''; } catch(e) {}
 }
@@ -1111,7 +1111,9 @@ function movieCard(m, i, catColor) {
         <button class="card-btn" onclick="editItem(${m.id})">✏ Edit</button>
         <button class="card-btn" onclick="toggleWatched(${m.id})">${m.watched?'↩':'✓'}</button>
         <button class="card-btn danger" onclick="confirmDelete(${m.id},'${m.title.replace(/'/g,"\\'")}')">🗑</button>
-      </div>`:''}
+      </div>`:`<div class="card-actions" onclick="event.stopPropagation()">
+        <button class="card-btn" onclick="toggleWatched(${m.id})">${m.watched?'↩ Unwatch':'✓ Watched'}</button>
+      </div>`}
     </div>
   </div>`;
 }
@@ -1147,7 +1149,9 @@ function seriesCard(m, i, catColor) {
         <button class="card-btn" onclick="editItem(${m.id})">✏ Edit</button>
         <button class="card-btn" onclick="toggleWatched(${m.id})">${m.watched?'↩ Unwatch':'✓ Watched'}</button>
         <button class="card-btn danger" onclick="confirmDelete(${m.id},'${m.title.replace(/'/g,"\\'")}')">🗑</button>
-      </div>`:''}
+      </div>`:`<div class="series-actions" onclick="event.stopPropagation()">
+        <button class="card-btn" onclick="toggleWatched(${m.id})">${m.watched?'↩ Unwatch':'✓ Watched'}</button>
+      </div>`}
     </div>
   </div>`;
 }
@@ -1303,7 +1307,6 @@ function _openAddModal(precat) {
   ['f-title','f-year','f-notes','f-director','f-protagonist','f-antagonist','f-story','f-description','f-link-url','f-link-label','f-download-url','f-copy-link'].forEach(id => { const el=document.getElementById(id); if(el) el.value=''; });
   document.getElementById('f-genre').value = '';
   clearRating();
-  document.getElementById('f-watched').value = 0;
   document.getElementById('f-seasons').value = 1;
   document.getElementById('f-status').value = 'ongoing';
   document.getElementById('f-category').value = (precat || (isCatPage(currentPage) ? currentPage : 'malayalam'));
@@ -1320,7 +1323,6 @@ function editItem(id) {
   document.getElementById('f-year').value       = m.year||'';
   document.getElementById('f-genre').value      = m.genre||'';
   applyRatingToForm(m.rating||0);
-  document.getElementById('f-watched').value    = m.watched||0;
   document.getElementById('f-notes').value      = m.notes||'';
   document.getElementById('f-director').value   = m.director||'';
   document.getElementById('f-protagonist').value= m.protagonist||'';
@@ -1353,7 +1355,6 @@ function saveItem() {
     year:         +document.getElementById('f-year').value || null,
     genre:         document.getElementById('f-genre').value,
     rating:        getRating(),
-    watched:      +document.getElementById('f-watched').value,
     notes:         document.getElementById('f-notes').value,
     director:      document.getElementById('f-director').value,
     protagonist:   document.getElementById('f-protagonist').value,
@@ -1441,11 +1442,20 @@ function renderEpList() {
 }
 
 // ── WATCH TOGGLE ──
+// Watched is personal: each visitor's list is saved in their own browser, so anyone can mark titles.
+let myWatched = {};
+try { myWatched = JSON.parse(localStorage.getItem('gs_watched') || '{}'); } catch (e) { myWatched = {}; }
+function saveMyWatched(id, v) {
+  if (v) myWatched[id] = 1; else delete myWatched[id];
+  try { localStorage.setItem('gs_watched', JSON.stringify(myWatched)); } catch (e) {}
+}
+function applyMyWatched() {
+  items.forEach(m => { m.watched = myWatched[m.id] ? 1 : 0; });
+}
 function toggleWatched(id) {
-  if (!isAdmin) { requireAdmin(() => toggleWatched(id)); return; }
   const m = items.find(x=>x.id===id); if (!m) return;
   m.watched = m.watched ? 0 : 1;
-  persist([m]);
+  saveMyWatched(id, m.watched);
   refreshCurrentPage(false);
   renderHome();
   showToast(m.watched ? '🦇 Marked watched!' : '↩ Marked unwatched');
@@ -1824,6 +1834,7 @@ function importData(input) {
   await load();
   renderHome();
   renderQuickPanel();
+  syncAdminButton();
   if (isAdmin) updateAdminUI();
 })();
 </script>
