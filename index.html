@@ -408,6 +408,24 @@ body > *{position:relative;z-index:1}
   #auth-btn{padding:7px 10px;max-width:96px;overflow:hidden;text-overflow:ellipsis}
   .ml-add,.ml-chips,.ml-section{margin-left:1rem;margin-right:1rem;padding-left:0;padding-right:0}
 }
+
+/* ADMIN PAGE */
+.ad-cards{display:grid;grid-template-columns:repeat(auto-fill,minmax(130px,1fr));gap:10px;margin:0 2rem 1.2rem}
+.ad-card{background:var(--card);border:1px solid var(--border);border-radius:10px;padding:14px}
+.ad-num{font-family:'Bebas Neue',sans-serif;font-size:34px;color:var(--bat);line-height:1}
+.ad-lbl{font-size:10px;letter-spacing:2px;text-transform:uppercase;color:var(--muted);margin-top:4px;font-weight:700}
+.ad-box{margin:0 2rem 1.2rem}
+.ad-bar{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:12px}
+.ad-bar input,.ad-bar select{flex:1 1 140px}
+.ad-row{display:flex;align-items:center;gap:10px;background:var(--card);border:1px solid var(--border);border-radius:8px;padding:9px 12px;margin-bottom:6px}
+.ad-main{flex:1 1 0;min-width:0}
+.ad-main b{display:block;font-size:14px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.ad-main small{color:var(--muted);font-size:11px;font-weight:600}
+.ad-emoji{font-size:22px;width:28px;text-align:center}
+.ad-cat{display:flex;gap:6px;flex-wrap:wrap;align-items:center;background:var(--card);border:1px solid var(--border);border-radius:8px;padding:10px;margin-bottom:8px}
+.ad-cat input[type=text]{flex:1 1 110px;min-width:0}
+.ad-cat input[type=color]{width:40px;height:36px;padding:0;border:none;background:none}
+@media(max-width:700px){.ad-cards,.ad-box{margin-left:1rem;margin-right:1rem}.nav-right .admin-only,#lock-btn{display:none!important}.ad-main small{white-space:normal}}
 </style>
 </head>
 <body>
@@ -497,6 +515,7 @@ body > *{position:relative;z-index:1}
 <div id="page-series" class="page"></div>
 <div id="page-other" class="page"></div>
 <div id="page-mylist" class="page"></div>
+<div id="page-admin" class="page"></div>
 <div id="page-catalog" class="page"></div>
 
 <!-- ══ ADD / EDIT MODAL ══ -->
@@ -751,8 +770,7 @@ body > *{position:relative;z-index:1}
       <button id="auth-tab-signin" class="active" onclick="switchAuthTab('signin')">Sign in</button>
       <button id="auth-tab-signup" onclick="switchAuthTab('signup')">Create account</button>
     </div>
-    <input type="text" id="auth-name" class="form-input" placeholder="Display name (shown next to your ratings)" maxlength="30" autocomplete="nickname" style="display:none">
-    <input type="email" id="auth-email" class="form-input" placeholder="Email" autocomplete="username" onkeydown="if(event.key==='Enter')document.getElementById('auth-password').focus()">
+        <input type="text" id="auth-email" class="form-input" placeholder="Username" autocomplete="username" autocapitalize="none" autocorrect="off" spellcheck="false" onkeydown="if(event.key==='Enter')document.getElementById('auth-password').focus()">
     <input type="password" id="auth-password" class="form-input" placeholder="Password (min 6 characters)" autocomplete="current-password" onkeydown="if(event.key==='Enter')submitAuth()">
     <div id="auth-error" style="color:#ff5533;font-size:12px;margin-bottom:10px;display:none"></div>
     <div class="confirm-actions">
@@ -905,6 +923,7 @@ function closeAdminModal() {
   pendingAdminAction = null;
 }
 function updateAdminUI() {
+  document.querySelectorAll('.nav-tab[data-page="admin"]').forEach(el => { el.style.display = isAdmin ? '' : 'none'; });
   // Show/hide admin-only elements
   document.querySelectorAll('.admin-only').forEach(el => {
     el.style.display = isAdmin ? '' : 'none';
@@ -940,6 +959,7 @@ function refreshCurrentPage(full) {
   if (isCatPage(currentPage)) { full ? renderPage(currentPage) : buildGrid(currentPage); }
   else if (currentPage === 'catalog') renderCatalog();
   else if (currentPage === 'mylist') renderMyList();
+  else if (currentPage === 'admin') renderAdmin();
 }
 let previousPage = 'home';
 let sortStates = {};
@@ -981,7 +1001,7 @@ async function load() {
       await persist();
     }
   }
-  await Promise.all([loadRatings(), loadWatchlist()]);
+  await Promise.all([loadRatings(), loadWatchlist(), loadCategories()]);
   applyMyWatched();
   try { quickLinks = JSON.parse(localStorage.getItem('gs_qlinks') || '[]'); } catch(e) { quickLinks = []; }
   try { document.getElementById('qp-desc').value = localStorage.getItem('gs_qdesc') || ''; } catch(e) {}
@@ -1012,11 +1032,13 @@ function grad(title) {
 
 // ── NAVIGATION ──
 function showPage(page) {
+  if (page === 'admin' && !isAdmin) { showToast('Admin only – sign in with the admin account'); return; }
   currentPage = page;
   document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
   document.getElementById('page-'+page).classList.add('active');
   document.querySelectorAll('.nav-tab').forEach(t => t.classList.toggle('active', t.dataset.page === page));
   if (page === 'mylist') renderMyList();
+  else if (page === 'admin') renderAdmin();
   else if (page !== 'home' && page !== 'catalog') renderPage(page);
   else if (page === 'catalog') renderCatalog();
   else { renderHome(); renderQuickPanel(); }
@@ -1917,39 +1939,40 @@ function switchAuthTab(mode) {
   authMode = mode;
   document.getElementById('auth-tab-signin').classList.toggle('active', mode === 'signin');
   document.getElementById('auth-tab-signup').classList.toggle('active', mode === 'signup');
-  document.getElementById('auth-name').style.display = mode === 'signup' ? '' : 'none';
+  document.getElementById('auth-email').placeholder = mode === 'signup' ? 'Choose a username' : 'Username (admin: your email)';
   document.getElementById('auth-submit').textContent = mode === 'signup' ? 'Create account' : 'Sign in';
   document.getElementById('auth-password').autocomplete = mode === 'signup' ? 'new-password' : 'current-password';
 }
 function authError(msg) { const e = document.getElementById('auth-error'); e.textContent = msg; e.style.display = 'block'; }
+const AUTH_DOMAIN = 'jokerstream.app';   // hidden: a username becomes username@jokerstream.app behind the scenes
+function userToEmail(u) { u = u.trim().toLowerCase(); return u.includes('@') ? u : u + '@' + AUTH_DOMAIN; }
 async function submitAuth() {
-  const email = document.getElementById('auth-email').value.trim();
+  const raw = document.getElementById('auth-email').value.trim();
   const password = document.getElementById('auth-password').value;
-  const name = document.getElementById('auth-name').value.trim();
-  if (!email || !password) { authError('❌ Enter your email and password'); return; }
-  if (authMode === 'signup' && password.length < 6) { authError('❌ Password must be at least 6 characters'); return; }
+  if (!raw || !password) { authError('❌ Enter your username and password'); return; }
+  if (authMode === 'signup') {
+    if (!/^[A-Za-z0-9_.]{3,20}$/.test(raw)) { authError('❌ Username: 3–20 letters, numbers, _ or .'); return; }
+    if (password.length < 6) { authError('❌ Password must be at least 6 characters'); return; }
+  }
   const btn = document.getElementById('auth-submit'); btn.disabled = true;
   try {
+    const email = userToEmail(raw);
     if (authMode === 'signup') {
-      const res = await fetch(`${SUPABASE_URL}/auth/v1/signup`, { method: 'POST', headers: sbHeaders(false),
-        body: JSON.stringify({ email, password, data: { name: name || email.split('@')[0] } }) });
+      const res = await fetch(`${SUPABASE_URL}/auth/v1/signup`, { method: 'POST', headers: sbHeaders(false), body: JSON.stringify({ email, password, data: { name: raw } }) });
       const d = await res.json().catch(() => ({}));
-      if (!res.ok) throw new Error(d.msg || d.error_description || d.message || 'Could not create account');
-      if (!d.access_token) {           // email confirmation is switched on in Supabase
-        switchAuthTab('signin');
-        authError('✅ Account created! Check your email to confirm it, then sign in.');
-        document.getElementById('auth-error').style.color = 'var(--bat)';
-        return;
-      }
+      const msg = d.msg || d.error_description || d.message || '';
+      if (!res.ok) throw new Error(/already|registered|exists/i.test(msg) ? 'That username is taken – try another' : (msg || 'Could not create account'));
+      if (!d.access_token) throw new Error('Sign-up needs "Confirm email" switched OFF in Supabase (Authentication → Sign In / Providers → Email)');
       saveSession(d);
     } else {
-      await authRequest('password', { email, password });
+      try { await authRequest('password', { email, password }); }
+      catch (e) { throw new Error(/invalid|credentials/i.test(e.message) ? 'Wrong username or password' : e.message); }
     }
     closeAuthModal();
     applyAuthState();
     await Promise.all([loadWatchlist(), loadRatings()]);
     refreshAll();
-    showToast('🦇 Welcome, ' + (currentUser ? currentUser.name : 'viewer') + '!');
+    showToast('🦇 Welcome, ' + (currentUser ? currentUser.name : raw) + '!');
   } catch (e) {
     document.getElementById('auth-error').style.color = '#ff5533';
     authError('❌ ' + (e.message || 'Sign-in failed'));
@@ -2161,6 +2184,135 @@ function renderMyList() {
       <button class="btn btn-bat" onclick="addCustomToList()">+ Add</button>
     </div>
     ${entries.length ? `<div class="ml-chips">${chips}</div>${sections}` : `<div class="section"><div class="grid"><div class="empty-state"><span class="empty-icon">🔖</span><h3>Your watchlist is empty</h3><p>Type a title above, or tap “＋ List” on any movie in any category.</p></div></div></div>`}`;
+}
+
+// ════════════════════════════════════════════════════════════
+//  CATEGORIES (admin can rename / add) + ADMIN PAGE
+// ════════════════════════════════════════════════════════════
+function cleanTxt(v, max) { return String(v == null ? '' : v).replace(/[<>&"'`\\]/g, '').trim().slice(0, max); }
+function applyCategoryRow(r) {
+  const key = String(r.key || '').toLowerCase().replace(/[^a-z0-9_-]/g, '').slice(0, 30); if (!key) return;
+  const prev = CATS[key] || {};
+  CATS[key] = { ...prev,
+    label: cleanTxt(r.label, 24) || prev.label || key, industry: cleanTxt(r.industry, 24),
+    emoji: cleanTxt(r.emoji, 8) || prev.emoji || '🎞️',
+    color: /^#[0-9a-f]{6}$/i.test(r.color || '') ? r.color : (prev.color || '#7f8c8d') };
+}
+async function loadCategories() {
+  let rows = [];
+  if (CLOUD) { try { rows = (await sbRequest('/rest/v1/categories?select=key,label,industry,emoji,color&order=sort.asc,key.asc')) || []; } catch (e) { console.warn('categories not loaded (run the updated SQL):', e.message); } }
+  else { try { rows = JSON.parse(localStorage.getItem('gs_cats') || '[]'); } catch (e) {} }
+  rows.forEach(applyCategoryRow);
+  syncCategoryUI();
+}
+function syncCategoryUI() {
+  const nav = document.getElementById('nav-tabs'); if (!nav) return;
+  nav.innerHTML = `<button class="nav-tab" data-page="home" onclick="showPage('home')">🏠 Home</button>` +
+    Object.entries(CATS).map(([k, c]) => `<button class="nav-tab" data-page="${k}" onclick="showPage('${k}')">${c.emoji} ${c.industry || c.label}</button>`).join('') +
+    `<button class="nav-tab" data-page="mylist" onclick="showPage('mylist')">🔖 My List</button>
+     <button class="nav-tab" data-page="catalog" onclick="showPage('catalog')">📋 Catalog</button>
+     <button class="nav-tab admin-only" data-page="admin" style="display:${isAdmin ? '' : 'none'}" onclick="showPage('admin')">⚙ Admin</button>`;
+  nav.querySelectorAll('.nav-tab').forEach(t => t.classList.toggle('active', t.dataset.page === currentPage));
+  const before = document.getElementById('page-admin');
+  Object.keys(CATS).forEach(k => { if (!document.getElementById('page-' + k)) { const d = document.createElement('div'); d.id = 'page-' + k; d.className = 'page'; before.parentNode.insertBefore(d, before); } });
+  const sel = document.getElementById('f-category');
+  if (sel) { const v = sel.value; sel.innerHTML = Object.entries(CATS).map(([k, c]) => `<option value="${k}">${c.emoji} ${catFull(k)}</option>`).join(''); if (CATS[v]) sel.value = v; }
+}
+async function upsertCategory(row) {
+  try {
+    if (CLOUD) await sbRequest('/rest/v1/categories?on_conflict=key', { method: 'POST', headers: { 'Prefer': 'resolution=merge-duplicates,return=minimal' }, body: JSON.stringify(row) }, true);
+    else { const all = JSON.parse(localStorage.getItem('gs_cats') || '[]').filter(x => x.key !== row.key); all.push(row); localStorage.setItem('gs_cats', JSON.stringify(all)); }
+    applyCategoryRow(row); syncCategoryUI(); renderHome(); renderAdmin(); showToast('✅ Category saved');
+  } catch (e) { console.error(e); showToast('⚠ Could not save category – run the updated SQL file'); }
+}
+function saveCategory(key) {
+  const g = id => document.getElementById(id).value;
+  upsertCategory({ key, label: g('cat-label-' + key), industry: g('cat-ind-' + key), emoji: g('cat-emoji-' + key), color: g('cat-color-' + key) });
+}
+function addCategory() {
+  const g = id => document.getElementById(id).value;
+  const label = cleanTxt(g('nc-label'), 24), key = label.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-+|-+$/g, '');
+  if (!key) { showToast('Type a category name first'); return; }
+  if (CATS[key]) { showToast('That category already exists'); return; }
+  upsertCategory({ key, label, industry: g('nc-ind'), emoji: g('nc-emoji') || '🎞️', color: g('nc-color') });
+}
+
+let adminTab = 'movies';
+function setAdminTab(t) { adminTab = t; renderAdmin(); }
+function renderAdmin() {
+  const pg = document.getElementById('page-admin'); if (!pg) return;
+  const hero = `<div class="catalog-hero" style="position:relative"><button class="back-home-btn" onclick="showPage('home')" style="position:static;margin-bottom:14px">← HOME</button><div class="catalog-hero-title">⚙ Admin <span>Panel</span></div><div class="catalog-hero-sub">Only you can see this page</div>${isAdmin?`<button class="btn btn-ghost" style="margin-top:14px" onclick="signOut()">Sign out</button>`:''}</div>`;
+  if (!isAdmin) { pg.innerHTML = hero + `<div class="ad-box"><p style="color:var(--muted)">Sign in with the admin account to use this page.</p></div>`; return; }
+  const tabs = [['stats', '📊 Overview'], ['movies', '🎬 Movies'], ['ratings', '⭐ Ratings'], ['categories', '🗂 Categories']]
+    .map(([k, l]) => `<button class="ml-chip${adminTab === k ? ' active' : ''}" onclick="setAdminTab('${k}')">${l}</button>`).join('');
+  pg.innerHTML = hero + `<div class="ml-chips">${tabs}</div><div id="admin-body"></div>`;
+  ({ stats: adminStats, movies: adminMovies, ratings: adminRatings, categories: adminCategories })[adminTab]();
+}
+async function adminStats() {
+  const body = document.getElementById('admin-body');
+  const card = (n, l) => `<div class="ad-card"><div class="ad-num">${n}</div><div class="ad-lbl">${l}</div></div>`;
+  const totalRatings = Object.values(ratingsByMovie).reduce((a, l) => a + l.length, 0);
+  const per = Object.entries(CATS).map(([k, c]) => card(items.filter(m => m.category === k).length, c.emoji + ' ' + (c.industry || c.label))).join('');
+  body.innerHTML = `<div class="ad-cards">${card(items.length, 'Titles on site')}${card(totalRatings, 'Ratings')}<div id="ad-server" style="display:contents"></div></div>
+    <div class="ad-box"><div class="comm-label">Titles per category</div></div><div class="ad-cards">${per}</div>
+    <div class="ad-box"><div class="comm-label">Backup</div><div class="ad-bar"><button class="btn btn-ghost" onclick="exportData()">💾 Export all movies</button>
+    <label class="btn btn-ghost" style="cursor:pointer">📂 Import backup<input type="file" accept=".json" style="display:none" onchange="importData(this)"></label></div></div>`;
+  try {
+    const st = await sbRequest('/rest/v1/rpc/admin_stats', { method: 'POST', body: '{}' }, true);
+    const el = document.getElementById('ad-server'); if (!el || !st) return;
+    el.innerHTML = card(st.users_total, 'Users (all)') + card(st.accounts, 'With account') + card(st.guests, 'Guests') + card(st.raters, 'People who rated') +
+      card(st.watchlist_total, 'Watchlist saves') + card(st.watchlist_users, 'People with a list') + card(st.watchlist_custom, 'Titles typed by hand');
+  } catch (e) {
+    const el = document.getElementById('ad-server');
+    if (el) el.innerHTML = `<div class="ad-card" style="grid-column:1/-1"><div class="ad-lbl">User counts need the updated SQL file (run it once in Supabase)</div></div>`;
+  }
+}
+function adminMovies() {
+  const opts = Object.entries(CATS).map(([k, c]) => `<option value="${k}">${c.emoji} ${catFull(k)}</option>`).join('');
+  document.getElementById('admin-body').innerHTML = `<div class="ad-box">
+    <div class="ad-bar"><input id="am-q" class="form-input" placeholder="Search titles…" oninput="filterAdminMovies()">
+    <select id="am-cat" class="form-select" onchange="filterAdminMovies()"><option value="">All categories</option>${opts}</select>
+    <button class="btn btn-bat" onclick="openAddModal()">+ Add title</button></div><div id="am-list"></div></div>`;
+  filterAdminMovies();
+}
+function filterAdminMovies() {
+  const q = (document.getElementById('am-q').value || '').toLowerCase(), cat = document.getElementById('am-cat').value;
+  const list = items.filter(m => (!cat || m.category === cat) && (!q || (m.title || '').toLowerCase().includes(q)))
+    .sort((a, b) => (a.category || '').localeCompare(b.category || '') || (a.title || '').localeCompare(b.title || ''));
+  const shown = list.slice(0, 300);
+  document.getElementById('am-list').innerHTML = (shown.map(m => { const c = CATS[m.category] || { emoji: '🎞️', label: m.category }, st = ratingStats(m.id);
+    return `<div class="ad-row"><span class="ad-emoji">${c.emoji}</span><div class="ad-main"><b>${esc(m.title)}</b><small>${m.year || ''} · ${esc(c.industry || c.label)}${st.count ? ` · ★ ${fmtRating(st.avg)} (${st.count})` : ''}</small></div>
+      <button class="card-btn" style="flex:0 0 auto" title="Edit" onclick="editItem(${m.id})">✏</button><button class="card-btn danger" style="flex:0 0 auto" title="Delete" onclick="adminDelete(${m.id})">🗑</button></div>`; }).join('') || '<p style="color:var(--muted)">No titles match.</p>') +
+    (list.length > 300 ? `<p style="color:var(--muted);font-size:12px">Showing 300 of ${list.length} – search to narrow down.</p>` : '');
+}
+function adminDelete(id) { const m = items.find(x => x.id === id); if (m) confirmDelete(id, m.title); }
+function adminRatings() {
+  document.getElementById('admin-body').innerHTML = `<div class="ad-box"><div class="ad-bar"><input id="ar-q" class="form-input" placeholder="Search by title or user name…" oninput="filterAdminRatings()"></div><div id="ar-list"></div></div>`;
+  filterAdminRatings();
+}
+function filterAdminRatings() {
+  const q = (document.getElementById('ar-q').value || '').toLowerCase(), rows = [];
+  Object.entries(ratingsByMovie).forEach(([mid, l]) => { const m = items.find(x => x.id === +mid); if (m) l.forEach(r => rows.push({ m, r })); });
+  const list = rows.filter(({ m, r }) => !q || m.title.toLowerCase().includes(q) || (r.user_name || '').toLowerCase().includes(q)).slice(0, 200);
+  document.getElementById('ar-list').innerHTML = list.map(({ m, r }) =>
+    `<div class="ad-row"><div class="ad-main"><b>${esc(m.title)}</b><small>${esc(r.user_name || 'Viewer')} · ★ ${r.rating}/10</small></div><button class="card-btn danger" onclick="adminDeleteRating(${m.id},'${esc(r.user_id)}')">🗑 Remove</button></div>`).join('') || '<p style="color:var(--muted)">No ratings yet.</p>';
+}
+async function adminDeleteRating(movieId, userId) {
+  if (!/^[0-9a-zA-Z-]+$/.test(userId)) return;
+  try {
+    if (CLOUD) await sbRequest(`/rest/v1/ratings?movie_id=eq.${movieId}&user_id=eq.${userId}`, { method: 'DELETE' }, true);
+    ratingsByMovie[movieId] = (ratingsByMovie[movieId] || []).filter(r => r.user_id !== userId);
+    showToast('Rating removed'); filterAdminRatings(); refreshAll();
+  } catch (e) { console.error(e); showToast('⚠ Could not remove – run the updated SQL file'); }
+}
+function adminCategories() {
+  const row = ([k, c]) => `<div class="ad-cat"><input type="text" id="cat-emoji-${k}" value="${c.emoji}" style="max-width:56px;text-align:center" class="form-input">
+    <input type="text" id="cat-label-${k}" value="${c.label}" class="form-input" placeholder="Name"><input type="text" id="cat-ind-${k}" value="${c.industry || ''}" class="form-input" placeholder="Industry (e.g. Bollywood)">
+    <input type="color" id="cat-color-${k}" value="${c.color}"><button class="card-btn on" onclick="saveCategory('${k}')">Save</button></div>`;
+  document.getElementById('admin-body').innerHTML = `<div class="ad-box"><div class="comm-label">Add a new category</div>
+    <div class="ad-cat"><input type="text" id="nc-emoji" class="form-input" value="🎞️" style="max-width:56px;text-align:center"><input type="text" id="nc-label" class="form-input" placeholder="Name (e.g. Marathi)">
+    <input type="text" id="nc-ind" class="form-input" placeholder="Industry (optional)"><input type="color" id="nc-color" value="#e67e22"><button class="btn btn-bat" onclick="addCategory()">+ Add</button></div>
+    <div class="comm-label" style="margin-top:16px">Rename / restyle existing</div>${Object.entries(CATS).map(row).join('')}</div>`;
 }
 
 // ── TOAST ──
