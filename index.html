@@ -360,6 +360,54 @@ body > *{position:relative;z-index:1}
 .confirm-box h3{font-family:'Bebas Neue',sans-serif;font-size:22px;color:#ff5533;margin-bottom:8px;letter-spacing:2px}
 .confirm-box p{font-size:13px;color:var(--muted);margin-bottom:20px;line-height:1.6}
 .confirm-actions{display:flex;gap:10px}
+
+/* AUTH / COMMUNITY RATINGS / WATCHLIST */
+.auth-box{border-color:rgba(240,192,48,0.25);max-width:360px}
+.auth-box h3{color:var(--bat)}
+.auth-box input{width:100%;margin-bottom:8px}
+.auth-box .confirm-actions{margin-top:14px}
+.auth-tabs{display:flex;gap:4px;margin-bottom:14px;background:var(--bg3);padding:3px;border-radius:8px}
+.auth-tabs button{flex:1;padding:7px;border:none;border-radius:6px;background:transparent;color:var(--muted);font-family:'Rajdhani',sans-serif;font-weight:700;font-size:12px;letter-spacing:1px;text-transform:uppercase;cursor:pointer}
+.auth-tabs button.active{background:rgba(240,192,48,0.14);color:var(--bat)}
+.card-btn.on{background:rgba(240,192,48,0.14);color:var(--bat);border-color:rgba(240,192,48,0.35)}
+.list-badge{position:absolute;top:34px;right:8px;background:rgba(4,5,10,0.8);border:1px solid rgba(240,192,48,0.4);font-size:11px;padding:1px 6px;border-radius:4px;z-index:3}
+.list-btn{display:inline-flex;align-items:center;gap:8px;padding:10px 20px;border-radius:8px;font-size:13px;font-weight:700;font-family:'Oswald',sans-serif;background:rgba(240,192,48,0.1);color:var(--bat);border:1px solid rgba(240,192,48,0.25);cursor:pointer;letter-spacing:1px;transition:all .2s}
+.list-btn:hover{background:rgba(240,192,48,0.18)}
+.list-btn.on{background:var(--bat);color:#04050a}
+.comm-box{background:var(--card);border:1px solid var(--border);border-radius:10px;padding:14px 16px;margin:4px 0 16px}
+.comm-head{display:flex;align-items:baseline;gap:8px;flex-wrap:wrap;margin-bottom:12px}
+.comm-avg{font-family:'Bebas Neue',sans-serif;font-size:34px;color:var(--bat);line-height:1}
+.comm-sub{font-size:12px;color:var(--muted);font-weight:600}
+.comm-label{font-size:10px;letter-spacing:2px;text-transform:uppercase;color:var(--muted);font-family:'Oswald',sans-serif;margin-bottom:4px}
+.rate-stars{display:flex;gap:2px;flex-wrap:wrap}
+.rate-star{background:none;border:none;font-size:25px;line-height:1;color:var(--muted);cursor:pointer;padding:0 1px;transition:transform .12s,color .12s}
+.rate-star.on{color:var(--bat)}
+.rate-stars:hover .rate-star{color:var(--bat)}
+.rate-stars:hover .rate-star:hover ~ .rate-star{color:var(--muted)}
+.rate-star:hover{transform:scale(1.2)}
+.comm-list{display:flex;flex-wrap:wrap;gap:6px;margin-top:14px;max-height:150px;overflow-y:auto}
+.comm-chip{font-size:11px;font-weight:700;padding:3px 10px;border-radius:99px;background:var(--bg3);border:1px solid var(--border);color:var(--text)}
+.comm-chip b{color:var(--bat)}
+.comm-chip.me{border-color:rgba(240,192,48,0.45)}
+.ml-add{display:flex;gap:8px;flex-wrap:wrap;margin:0 2rem 1rem}
+.ml-chips{display:flex;gap:6px;flex-wrap:wrap;padding:0 2rem 1.2rem}
+.ml-chip{padding:6px 13px;border-radius:99px;font-size:11px;font-weight:700;font-family:'Rajdhani',sans-serif;letter-spacing:1px;text-transform:uppercase;background:var(--bg3);border:1px solid var(--border);color:var(--muted);cursor:pointer}
+.ml-chip.active{background:rgba(240,192,48,0.12);color:var(--bat);border-color:rgba(240,192,48,0.3)}
+.ml-section{padding:0 2rem 1.8rem}
+.ml-custom{display:flex;flex-direction:column;gap:6px;margin-top:12px}
+.ml-custom-row{display:flex;align-items:center;justify-content:space-between;gap:10px;background:var(--card);border:1px solid var(--border);border-radius:8px;padding:9px 14px;font-size:14px;font-weight:600}
+.ml-custom-row button{background:none;border:none;color:var(--muted);cursor:pointer;font-size:14px}
+.ml-custom-row button:hover{color:#ff5533}
+@media(max-width:700px){
+  .navbar{padding:0 .7rem;gap:8px}
+  .logo{font-size:22px;letter-spacing:2px}
+  .logo em{display:none}
+  .nav-tabs{flex:1;min-width:0}
+  .nav-right{gap:4px}
+  #signout-btn{display:none!important}
+  #auth-btn{padding:7px 10px;max-width:96px;overflow:hidden;text-overflow:ellipsis}
+  .ml-add,.ml-chips,.ml-section{margin-left:1rem;margin-right:1rem;padding-left:0;padding-right:0}
+}
 </style>
 </head>
 <body>
@@ -368,19 +416,24 @@ body > *{position:relative;z-index:1}
 <nav class="navbar">
   <div class="logo" onclick="showPage('home')" title="Go to Home"><span class="logo-bat">🦇</span> Joker<em>Stream</em></div>
   <div class="nav-tabs" id="nav-tabs">
-    <button class="nav-tab active" onclick="showPage('home')">🏠 Home</button>
-    <button class="nav-tab" onclick="showPage('malayalam')">🎬 Malayalam</button>
-    <button class="nav-tab" onclick="showPage('telugu')">🎥 Telugu</button>
-    <button class="nav-tab" onclick="showPage('tamil')">🎥 Tamil</button>
-    <button class="nav-tab" onclick="showPage('hindi')">🎦 Hindi</button>
-    <button class="nav-tab" onclick="showPage('english')">🌎 English</button>
-    <button class="nav-tab" onclick="showPage('anime')">⚡ Anime</button>
-    <button class="nav-tab" onclick="showPage('series')">📺 Series</button>
-    <button class="nav-tab" onclick="showPage('catalog')">📋 Catalog</button>
+    <button class="nav-tab active" data-page="home" onclick="showPage('home')">🏠 Home</button>
+    <button class="nav-tab" data-page="malayalam" onclick="showPage('malayalam')">🎬 Mollywood</button>
+    <button class="nav-tab" data-page="kannada" onclick="showPage('kannada')">🐘 Sandalwood</button>
+    <button class="nav-tab" data-page="telugu" onclick="showPage('telugu')">🎥 Tollywood</button>
+    <button class="nav-tab" data-page="tamil" onclick="showPage('tamil')">🎥 Kollywood</button>
+    <button class="nav-tab" data-page="hindi" onclick="showPage('hindi')">🎦 Bollywood</button>
+    <button class="nav-tab" data-page="english" onclick="showPage('english')">🌎 Hollywood</button>
+    <button class="nav-tab" data-page="anime" onclick="showPage('anime')">⚡ Anime</button>
+    <button class="nav-tab" data-page="series" onclick="showPage('series')">📺 Series</button>
+    <button class="nav-tab" data-page="other" onclick="showPage('other')">🎞️ Other</button>
+    <button class="nav-tab" data-page="mylist" onclick="showPage('mylist')">🔖 My List</button>
+    <button class="nav-tab" data-page="catalog" onclick="showPage('catalog')">📋 Catalog</button>
   </div>
   <div class="nav-right">
     <button class="btn btn-ghost admin-only" onclick="exportData()" title="Export all your movies as a backup file" style="display:none">💾 Export</button>
     <label class="btn btn-ghost admin-only" style="cursor:pointer;display:none" title="Import a previously exported backup">📂 Import<input type="file" accept=".json" style="display:none" onchange="importData(this)"></label>
+    <button class="btn btn-ghost" id="auth-btn" onclick="onAuthBtn()">👤 Sign in</button>
+    <button class="btn btn-ghost" id="signout-btn" style="display:none" onclick="signOut()">Sign out</button>
     <button class="btn btn-ghost" id="lock-btn" style="display:none" onclick="toggleAdmin()">🔒 Admin</button>
     <button class="btn btn-bat admin-only" id="add-btn" onclick="openAddModal()" style="display:none">+ Add</button>
   </div>
@@ -394,7 +447,7 @@ body > *{position:relative;z-index:1}
     <div class="hero-content">
       <div class="hero-tag">🦇 &nbsp; Your Private Cinema &nbsp; 🦇</div>
       <h1 class="hero-title">Dark<br><span>Joker</span><br>Cinema</h1>
-      <p class="hero-desc">Browse Malayalam, Tamil, Hindi, English films, Anime & Series — all in your private Gotham vault.</p>
+      <p class="hero-desc">Browse Mollywood, Sandalwood, Tollywood, Kollywood, Bollywood &amp; Hollywood films, Anime, Series &amp; more — all in your private Gotham vault.</p>
       <div class="hero-stats">
         <div class="stat"><div class="stat-num" id="h-total">0</div><div class="stat-label">Total</div></div>
         <div class="stat"><div class="stat-num" id="h-movies">0</div><div class="stat-label">Movies</div></div>
@@ -403,6 +456,7 @@ body > *{position:relative;z-index:1}
       </div>
       <div class="hero-actions">
         <button class="btn btn-bat admin-only" onclick="openAddModal()" style="display:none">+ Add to Vault</button>
+        <button class="btn btn-ghost" onclick="showPage('mylist')">🔖 My Watchlist</button>
         <button class="btn btn-ghost" onclick="showPage('catalog')">📋 View Catalog</button>
       </div>
     </div>
@@ -434,12 +488,15 @@ body > *{position:relative;z-index:1}
 
 <!-- ══ MOVIE PAGES ══ -->
 <div id="page-malayalam" class="page"></div>
+<div id="page-kannada" class="page"></div>
 <div id="page-telugu" class="page"></div>
 <div id="page-tamil" class="page"></div>
 <div id="page-hindi" class="page"></div>
 <div id="page-english" class="page"></div>
 <div id="page-anime" class="page"></div>
 <div id="page-series" class="page"></div>
+<div id="page-other" class="page"></div>
+<div id="page-mylist" class="page"></div>
 <div id="page-catalog" class="page"></div>
 
 <!-- ══ ADD / EDIT MODAL ══ -->
@@ -450,13 +507,15 @@ body > *{position:relative;z-index:1}
     <div class="form-group">
       <label class="form-label">Category *</label>
       <select id="f-category" class="form-select" onchange="onCategoryChange()">
-        <option value="malayalam">🎬 Malayalam</option>
-        <option value="telugu">🎥 Telugu</option>
-        <option value="tamil">🎥 Tamil</option>
-        <option value="hindi">🎦 Hindi</option>
-        <option value="english">🌎 English</option>
+        <option value="malayalam">🎬 Malayalam · Mollywood</option>
+        <option value="kannada">🐘 Kannada · Sandalwood</option>
+        <option value="telugu">🎥 Telugu · Tollywood</option>
+        <option value="tamil">🎥 Tamil · Kollywood</option>
+        <option value="hindi">🎦 Hindi · Bollywood</option>
+        <option value="english">🌎 English · Hollywood</option>
         <option value="anime">⚡ Anime</option>
         <option value="series">📺 Series</option>
+        <option value="other">🎞️ Other</option>
       </select>
     </div>
 
@@ -498,7 +557,7 @@ body > *{position:relative;z-index:1}
 
     <!-- RATING: 10 stars -->
     <div class="form-group">
-      <label class="form-label">Rating (out of 10)</label>
+      <label class="form-label">Starting rating (out of 10) <span style="text-transform:none;letter-spacing:0;opacity:.7">— shown until viewers rate it</span></label>
       <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap">
         <div class="star-rating-wrap" id="star-rating-wrap">
           <input type="radio" id="s10" name="frating" value="10"><label for="s10">★</label>
@@ -627,6 +686,7 @@ body > *{position:relative;z-index:1}
     <div class="detail-title" id="detail-title"></div>
     <div class="detail-meta-row" id="detail-meta-row"></div>
     <div class="detail-stars" id="detail-stars"></div>
+    <div id="detail-community"></div>
     <div id="detail-story" style="display:none;margin-bottom:16px" class="detail-story-block">
       <div class="detail-story-label">Story</div>
       <div class="detail-story-text" id="detail-story-text"></div>
@@ -638,6 +698,7 @@ body > *{position:relative;z-index:1}
     <div id="detail-ep-block" style="display:none;margin-bottom:18px"></div>
     <div class="detail-actions-row" style="margin-bottom:16px">
       <button class="detail-play-btn" id="detail-play-btn" onclick="detailToggleWatched()">✓ Mark Watched</button>
+      <button class="list-btn" id="detail-list-btn" onclick="detailToggleList()">🔖 Add to My Watchlist</button>
       <button class="detail-action-btn edit-btn admin-only" onclick="requireAdmin(detailEditItem)" style="display:none">✏ Edit</button>
       <button class="detail-action-btn danger-btn admin-only" onclick="requireAdmin(detailDeleteItem)" style="display:none">🗑 Delete</button>
     </div>
@@ -681,20 +742,43 @@ body > *{position:relative;z-index:1}
   </div>
 </div>
 
+<!-- SIGN IN / CREATE ACCOUNT -->
+<div class="confirm-backdrop" id="auth-modal">
+  <div class="confirm-box auth-box" onclick="event.stopPropagation()">
+    <h3 id="auth-title">🦇 Welcome</h3>
+    <p id="auth-sub">Optional – sign in to keep your ratings and watchlist on every device.</p>
+    <div class="auth-tabs">
+      <button id="auth-tab-signin" class="active" onclick="switchAuthTab('signin')">Sign in</button>
+      <button id="auth-tab-signup" onclick="switchAuthTab('signup')">Create account</button>
+    </div>
+    <input type="text" id="auth-name" class="form-input" placeholder="Display name (shown next to your ratings)" maxlength="30" autocomplete="nickname" style="display:none">
+    <input type="email" id="auth-email" class="form-input" placeholder="Email" autocomplete="username" onkeydown="if(event.key==='Enter')document.getElementById('auth-password').focus()">
+    <input type="password" id="auth-password" class="form-input" placeholder="Password (min 6 characters)" autocomplete="current-password" onkeydown="if(event.key==='Enter')submitAuth()">
+    <div id="auth-error" style="color:#ff5533;font-size:12px;margin-bottom:10px;display:none"></div>
+    <div class="confirm-actions">
+      <button class="btn btn-ghost" style="flex:1;justify-content:center" onclick="closeAuthModal()">Cancel</button>
+      <button class="btn btn-bat" id="auth-submit" style="flex:1;justify-content:center" onclick="submitAuth()">Sign in</button>
+    </div>
+  </div>
+</div>
+
 <!-- TOAST -->
 <div class="toast" id="toast"></div>
 
 <script>
 // ── DATA ──
 const CATS = {
-  'malayalam':        { label:'Malayalam',     emoji:'🎬', color:'#c0392b' },
-  'telugu':            { label:'Telugu',    emoji:'🎭', color:'#e67e22' },
-  'tamil':            { label:'Tamil',         emoji:'🎥', color:'#8e44ad' },
-  'hindi':            { label:'Hindi',         emoji:'🎦', color:'#2980b9' },
-  'english':          { label:'English',       emoji:'🌎', color:'#27ae60' },
-  'anime':            { label:'Anime',         emoji:'⚡', color:'#e91e8c' },
-  'series':           { label:'Series',        emoji:'📺', color:'#16a085' },
+  'malayalam':        { label:'Malayalam',     industry:'Mollywood',  emoji:'🎬', color:'#c0392b' },
+  'kannada':          { label:'Kannada',       industry:'Sandalwood', emoji:'🐘', color:'#d4a017' },
+  'telugu':           { label:'Telugu',        industry:'Tollywood',  emoji:'🎭', color:'#e67e22' },
+  'tamil':            { label:'Tamil',         industry:'Kollywood',  emoji:'🎥', color:'#8e44ad' },
+  'hindi':            { label:'Hindi',         industry:'Bollywood',  emoji:'🎦', color:'#2980b9' },
+  'english':          { label:'English',       industry:'Hollywood',  emoji:'🌎', color:'#27ae60' },
+  'anime':            { label:'Anime',         industry:'',           emoji:'⚡', color:'#e91e8c' },
+  'series':           { label:'Series',        industry:'',           emoji:'📺', color:'#16a085' },
+  'other':            { label:'Other',         industry:'',           emoji:'🎞️', color:'#7f8c8d' },
 };
+function catFull(k) { const c = CATS[k]; return c ? c.label + (c.industry ? ' · ' + c.industry : '') : k; }
 const GENRE_EMOJI = {
   Action:'🎬',Comedy:'😂',Drama:'🎭',Horror:'👻','Sci-Fi':'🚀',Romance:'💕',
   Thriller:'🔪',Animation:'🎨',Documentary:'📽️',Fantasy:'🧙',Crime:'🕵️',
@@ -713,6 +797,10 @@ const SUPABASE_URL      = 'https://jyrdhmioqvxojacllyqg.supabase.co';
 const SUPABASE_ANON_KEY = 'sb_publishable_AYT5GqqlaEIEgQHIXwOp4A_hlpBbepr';
 const CLOUD = !!(SUPABASE_URL && SUPABASE_ANON_KEY);
 let session = null;
+let currentUser = null;           // {id, email, name} when a viewer is signed in
+// Only these emails get admin powers in the UI. ALSO put the same email in the SQL policy
+// (supabase-setup.sql) so the database itself refuses edits from anyone else.
+const ADMIN_EMAILS = ['arjunanbiju828@gmail.com'];
 
 function sbHeaders(auth) {
   const h = { 'Content-Type': 'application/json', 'apikey': SUPABASE_ANON_KEY };
@@ -748,7 +836,7 @@ async function ensureSession() {
   if (!session) throw Object.assign(new Error('Not signed in'), { status: 401 });
   if (Date.now() > session.expires_at - 60000) {
     try { await authRequest('refresh_token', { refresh_token: session.refresh_token }); }
-    catch (e) { clearSession(); isAdmin = false; updateAdminUI(); throw Object.assign(e, { status: 401 }); }
+    catch (e) { clearSession(); applyAuthState(); throw Object.assign(e, { status: 401 }); }
   }
 }
 async function cloudLoad() {
@@ -790,7 +878,12 @@ async function checkAdminPassword() {
   const errEl = document.getElementById('admin-error');
   let ok = false, msg = '❌ Wrong password!';
   if (CLOUD) {
-    try { await authRequest('password', { email: document.getElementById('admin-email-input').value.trim(), password: pwEl.value }); ok = true; }
+    try {
+      await authRequest('password', { email: document.getElementById('admin-email-input').value.trim(), password: pwEl.value });
+      applyAuthState();
+      ok = isAdmin;
+      if (!ok) msg = '❌ This account is not an admin';
+    }
     catch (e) { msg = '❌ ' + (e.message || 'Sign-in failed'); }
   } else {
     ok = pwEl.value === ADMIN_PASSWORD;
@@ -832,9 +925,7 @@ function syncAdminButton() {
 window.addEventListener('hashchange', syncAdminButton);
 function toggleAdmin() {
   if (isAdmin) {
-    isAdmin = false;
-    clearSession();
-    updateAdminUI();
+    if (CLOUD) signOut(); else { isAdmin = false; updateAdminUI(); }
     showToast('🔒 Locked – view only mode');
   } else {
     requireAdmin(() => showToast('🔓 Admin mode unlocked'));
@@ -848,6 +939,7 @@ function isCatPage(p) { return Object.prototype.hasOwnProperty.call(CATS, p); }
 function refreshCurrentPage(full) {
   if (isCatPage(currentPage)) { full ? renderPage(currentPage) : buildGrid(currentPage); }
   else if (currentPage === 'catalog') renderCatalog();
+  else if (currentPage === 'mylist') renderMyList();
 }
 let previousPage = 'home';
 let sortStates = {};
@@ -861,7 +953,7 @@ async function load() {
   if (CLOUD) {
     try {
       const saved = JSON.parse(localStorage.getItem('gs_session') || 'null');
-      if (saved && saved.refresh_token) { session = saved; await ensureSession(); isAdmin = true; }
+      if (saved && saved.refresh_token) { session = saved; await ensureSession(); computeAuth(); }
     } catch (e) { clearSession(); }
     try {
       items = await cloudLoad();
@@ -889,6 +981,7 @@ async function load() {
       await persist();
     }
   }
+  await Promise.all([loadRatings(), loadWatchlist()]);
   applyMyWatched();
   try { quickLinks = JSON.parse(localStorage.getItem('gs_qlinks') || '[]'); } catch(e) { quickLinks = []; }
   try { document.getElementById('qp-desc').value = localStorage.getItem('gs_qdesc') || ''; } catch(e) {}
@@ -922,11 +1015,9 @@ function showPage(page) {
   currentPage = page;
   document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
   document.getElementById('page-'+page).classList.add('active');
-  document.querySelectorAll('.nav-tab').forEach((t,i) => {
-    const pages = ['home','malayalam','telugu','tamil','hindi','english','anime','series','catalog'];
-    t.classList.toggle('active', pages[i] === page);
-  });
-  if (page !== 'home' && page !== 'catalog') renderPage(page);
+  document.querySelectorAll('.nav-tab').forEach(t => t.classList.toggle('active', t.dataset.page === page));
+  if (page === 'mylist') renderMyList();
+  else if (page !== 'home' && page !== 'catalog') renderPage(page);
   else if (page === 'catalog') renderCatalog();
   else { renderHome(); renderQuickPanel(); }
   if (page === 'home') document.getElementById('fab-home').classList.remove('visible');
@@ -940,6 +1031,7 @@ function renderHome() {
     return `<div class="home-cat" style="background:${grad(cat.label)}" onclick="showPage('${key}')">
       <div class="home-cat-icon">${cat.emoji}</div>
       <div class="home-cat-name">${cat.label}</div>
+      ${cat.industry?`<div style="font-size:11px;font-weight:700;letter-spacing:2px;text-transform:uppercase;color:var(--bat);opacity:.85;margin-top:-2px">${cat.industry}</div>`:''}
       <div class="home-cat-count">${count} item${count!==1?'s':''}</div>
     </div>`;
   }).join('');
@@ -997,10 +1089,11 @@ function renderPage(cat) {
       <div style="position:absolute;inset:0;background:radial-gradient(ellipse at 60% 40%,${hexToRgba(catInfo.color,0.09)} 0%,transparent 60%),var(--bg)"></div>
       <button class="back-home-btn" onclick="showPage('home')">← HOME</button>
       <div class="hero-content" style="position:relative;z-index:2">
-        <div class="hero-tag">${catInfo.emoji} &nbsp; ${catInfo.label} &nbsp; ${catInfo.emoji}</div>
-        <h1 class="hero-title" style="font-size:clamp(44px,6vw,74px)">${catInfo.label}<br><span>Collection</span></h1>
+        <div class="hero-tag">${catInfo.emoji} &nbsp; ${catInfo.industry||catInfo.label} &nbsp; ${catInfo.emoji}</div>
+        <h1 class="hero-title" style="font-size:clamp(44px,6vw,74px)">${catInfo.label}<br><span>${catInfo.industry||'Collection'}</span></h1>
         <div class="hero-actions" style="margin-top:18px">
           <button class="btn btn-bat admin-only" style="display:${isAdmin?'':'none'}" onclick="openAddModal('${cat}')">+ Add ${cat==='series'?'Series':cat==='anime'?'Anime':'Movie'}</button>
+          <button class="btn btn-ghost" onclick="goAddToList('${cat}')">🔖 Not here? Add to my list</button>
         </div>
       </div>
     </section>
@@ -1013,7 +1106,7 @@ function renderPage(cat) {
         <option value="">All Genres</option>
       </select>
       <select class="filter-select" id="sf-${cat}" onchange="filterGrid('${cat}')">
-        <option value="">All</option><option value="watched">Watched</option><option value="unwatched">Unwatched</option>
+        <option value="">All</option><option value="watchlist">🔖 My Watchlist</option><option value="watched">Watched</option><option value="unwatched">Unwatched</option>
       </select>
       <div class="sort-group">
         <button class="sort-btn active" onclick="sortGrid('${cat}','title',this)">A–Z</button>
@@ -1053,12 +1146,13 @@ function buildGrid(cat) {
     if (gf && m.genre !== gf) return false;
     if (sf==='watched'   && !m.watched) return false;
     if (sf==='unwatched' &&  m.watched) return false;
+    if (sf==='watchlist' && !inList(m.id)) return false;
     return true;
   });
   list.sort((a,b) => {
     if (sort==='title')  return a.title.localeCompare(b.title);
     if (sort==='year')   return (b.year||0)-(a.year||0);
-    if (sort==='rating') return (b.rating||0)-(a.rating||0);
+    if (sort==='rating') return effRating(b)-effRating(a);
     return 0;
   });
   const allGenres = [...new Set(items.filter(m=>m.category===cat).map(m=>m.genre).filter(Boolean))].sort();
@@ -1070,6 +1164,15 @@ function buildGrid(cat) {
   document.getElementById('lbl-'+cat).textContent = CATS[cat].label;
   document.getElementById('cnt-'+cat).textContent = `${list.length} item${list.length!==1?'s':''}`;
   const catColor = CATS[cat].color;
+  if (!list.length && sf==='watchlist') {
+    const needSign = false;
+    gridEl.innerHTML = `<div class="empty-state"><span class="empty-icon">🔖</span><h3>${needSign?'Sign in to use your watchlist':'Nothing on your watchlist here'}</h3><p>${needSign?'Your watchlist is private – only you can see it.':'Tap “＋ List” on any title to save it for later.'}</p>${needSign?`<button class="btn btn-bat" onclick="openAuthModal('signin')">Sign in / Create account</button>`:''}</div>`;
+    return;
+  }
+  if (!list.length && q) {
+    gridEl.innerHTML = `<div class="empty-state"><span class="empty-icon">🔎</span><h3>“${esc(searchEl.value.trim())}” isn’t on the site yet</h3><p>You can still save it to your own private watchlist.</p><button class="btn btn-bat" onclick="addSearchToList('${cat}')">🔖 Add it to my watchlist</button></div>`;
+    return;
+  }
   if (!list.length) {
     gridEl.innerHTML = `<div class="empty-state"><span class="empty-icon">${CATS[cat].emoji}</span><h3>Nothing here yet</h3><p>${isAdmin?`Add your first ${cat==='series'?'series':cat==='anime'?'anime':'movie'} to get started.`:'Nothing has been added yet.'}</p><button class="btn btn-bat admin-only" style="display:${isAdmin?'':'none'}" onclick="openAddModal('${cat}')">+ Add Now</button></div>`;
     return;
@@ -1087,13 +1190,14 @@ function movieCard(m, i, catColor) {
   const posterContent = thumb
     ? `<img class="card-thumb" src="${thumb}" alt="${m.title}">`
     : `<span style="position:relative;z-index:1;filter:drop-shadow(0 5px 12px rgba(0,0,0,0.5))">${emoji}</span>`;
-  const ratingDisplay = m.rating ? `<div class="card-stars">${'★'.repeat(m.rating)}${'☆'.repeat(10-m.rating)}</div>` : '';
+  const ratingDisplay = cardStars(m);
   return `
   <div class="movie-card" style="animation-delay:${i*0.04}s" onclick="openDetailPage(${m.id})">
     <div class="card-poster" style="background:${grad(m.title)}">
       ${posterContent}
       <div class="play-overlay"><div class="play-circle">▶</div></div>
       ${m.watched?'<div class="watched-badge">Watched</div>':''}
+      ${inList(m.id)?'<div class="list-badge" title="On your watchlist">🔖</div>':''}
       <div class="lang-badge" style="background:${catColor}88">${CATS[m.category].emoji}</div>
       ${isAdmin?`<label class="thumb-upload-btn" onclick="event.stopPropagation()" title="Change thumbnail">
         📷 POSTER
@@ -1110,9 +1214,11 @@ function movieCard(m, i, catColor) {
       ${isAdmin?`<div class="card-actions" onclick="event.stopPropagation()">
         <button class="card-btn" onclick="editItem(${m.id})">✏ Edit</button>
         <button class="card-btn" onclick="toggleWatched(${m.id})">${m.watched?'↩':'✓'}</button>
+        ${listBtn(m,true)}
         <button class="card-btn danger" onclick="confirmDelete(${m.id},'${m.title.replace(/'/g,"\\'")}')">🗑</button>
       </div>`:`<div class="card-actions" onclick="event.stopPropagation()">
         <button class="card-btn" onclick="toggleWatched(${m.id})">${m.watched?'↩ Unwatch':'✓ Watched'}</button>
+        ${listBtn(m,false)}
       </div>`}
     </div>
   </div>`;
@@ -1144,13 +1250,15 @@ function seriesCard(m, i, catColor) {
         <span class="series-pill">${m.seasons||1} Season${(m.seasons||1)>1?'s':''}</span>
       </div>
       <div class="series-eps">${epCount} episode${epCount!==1?'s':''}</div>
-      ${m.rating?`<div class="card-stars" style="margin-top:6px">${'★'.repeat(m.rating)}${'☆'.repeat(10-m.rating)}</div>`:''}
+      ${cardStars(m,'margin-top:6px')}
       ${isAdmin?`<div class="series-actions" onclick="event.stopPropagation()">
         <button class="card-btn" onclick="editItem(${m.id})">✏ Edit</button>
         <button class="card-btn" onclick="toggleWatched(${m.id})">${m.watched?'↩ Unwatch':'✓ Watched'}</button>
+        ${listBtn(m,false)}
         <button class="card-btn danger" onclick="confirmDelete(${m.id},'${m.title.replace(/'/g,"\\'")}')">🗑</button>
       </div>`:`<div class="series-actions" onclick="event.stopPropagation()">
         <button class="card-btn" onclick="toggleWatched(${m.id})">${m.watched?'↩ Unwatch':'✓ Watched'}</button>
+        ${listBtn(m,false)}
       </div>`}
     </div>
   </div>`;
@@ -1504,7 +1612,7 @@ function openDetailPage(id) {
   document.getElementById('detail-title').textContent = m.title + (m.year ? ` (${m.year})` : '');
   // Pills
   const pills = [];
-  if (m.category) pills.push(`<span class="detail-pill">${CATS[m.category]?.label||m.category}</span>`);
+  if (m.category) pills.push(`<span class="detail-pill">${CATS[m.category] ? catFull(m.category) : m.category}</span>`);
   if (m.genre)    pills.push(`<span class="detail-pill gold">${m.genre}</span>`);
   if (m.category === 'series') {
     if (m.seasons) pills.push(`<span class="detail-pill">${m.seasons} Season${m.seasons>1?'s':''}</span>`);
@@ -1515,7 +1623,7 @@ function openDetailPage(id) {
   if (m.watched) pills.push('<span class="detail-pill gold">✓ Watched</span>');
   document.getElementById('detail-meta-row').innerHTML = pills.join('');
   // Stars (out of 10)
-  document.getElementById('detail-stars').textContent = m.rating ? ('★'.repeat(m.rating)+'☆'.repeat(10-m.rating)) + `  ${m.rating}/10` : '';
+  { const er = effRating(m); document.getElementById('detail-stars').textContent = er ? ('★'.repeat(Math.round(er))+'☆'.repeat(10-Math.round(er))) + `  ${fmtRating(er)}/10` : ''; }
   // Story
   const storyWrap = document.getElementById('detail-story');
   if (m.story) { document.getElementById('detail-story-text').textContent = m.story; storyWrap.style.display='block'; }
@@ -1591,6 +1699,7 @@ function openDetailPage(id) {
   }
   document.getElementById('detail-page').classList.add('open');
   document.body.style.overflow = 'hidden';
+  renderCommunity(id); updateDetailListBtn(); refreshMovieRatings(id);
 }
 function closeDetailPage() {
   document.getElementById('detail-page').classList.remove('open');
@@ -1656,7 +1765,7 @@ function renderCatalog() {
     const barWidth   = catItems.length ? Math.round((catItems.length/maxCount)*100) : 0;
     return `<div class="catalog-cat-card" onclick="showPage('${key}')">
       <div class="catalog-cat-emoji">${cat.emoji}</div>
-      <div class="catalog-cat-name">${cat.label}</div>
+      <div class="catalog-cat-name">${cat.label}${cat.industry?` <span style="font-size:10px;color:var(--bat)">${cat.industry}</span>`:''}</div>
       <div class="catalog-cat-count">${catItems.length} item${catItems.length!==1?'s':''}</div>
       <div class="catalog-cat-bar-wrap"><div class="catalog-cat-bar" style="width:${barWidth}%;background:${cat.color}"></div></div>
       <div class="catalog-cat-watched">${catWatched} watched · ${catPct}%</div>
@@ -1685,7 +1794,7 @@ function renderCatalog() {
     </div>
     <select class="filter-select" id="catalog-cat-filter" onchange="setCatalogCatFilter(this.value)">
       <option value="all">All Categories</option>
-      ${Object.entries(CATS).map(([k,v])=>`<option value="${k}"${catalogFilter===k?' selected':''}>${v.emoji} ${v.label}</option>`).join('')}
+      ${Object.entries(CATS).map(([k,v])=>`<option value="${k}"${catalogFilter===k?' selected':''}>${v.emoji} ${catFull(k)}</option>`).join('')}
       <option value="watched"${catalogFilter==='watched'?' selected':''}>✓ Watched</option>
       <option value="unwatched"${catalogFilter==='unwatched'?' selected':''}>○ Unwatched</option>
     </select>
@@ -1712,7 +1821,7 @@ function buildCatalogList() {
   list.sort((a,b)=>{
     if (sort==='title')  return a.title.localeCompare(b.title);
     if (sort==='year')   return (b.year||0)-(a.year||0);
-    if (sort==='rating') return (b.rating||0)-(a.rating||0);
+    if (sort==='rating') return effRating(b)-effRating(a);
     if (sort==='recent') return (b.id||0)-(a.id||0);
     return 0;
   });
@@ -1732,18 +1841,326 @@ function buildCatalogList() {
       <div class="catalog-item-info">
         <div class="catalog-item-title">${m.title}</div>
         <div class="catalog-item-meta">
-          <span class="catalog-item-cat" style="background:${cat.color}88">${cat.emoji} ${cat.label}</span>
+          <span class="catalog-item-cat" style="background:${cat.color}88">${cat.emoji} ${cat.industry||cat.label}</span>
           ${m.genre ? `<span class="catalog-item-genre">${m.genre}</span>` : ''}
           ${m.year  ? `<span class="catalog-item-year">${m.year}</span>` : ''}
           ${m.director ? `<span class="catalog-item-genre">Dir: ${m.director}</span>` : ''}
         </div>
       </div>
       <div class="catalog-item-right">
-        ${m.rating ? `<span class="catalog-item-rating">★ ${m.rating}/10</span>` : ''}
+        ${effRating(m) ? `<span class="catalog-item-rating">★ ${fmtRating(effRating(m))}/10</span>` : ''}
         ${m.watched ? `<span class="catalog-item-watched">Watched</span>` : ''}
       </div>
     </div>`;
   }).join('');
+}
+
+// ════════════════════════════════════════════════════════════
+//  VIEWER ACCOUNTS · COMMUNITY RATINGS · PRIVATE WATCHLIST
+// ════════════════════════════════════════════════════════════
+function esc(v) {
+  return String(v == null ? '' : v).replace(/[&<>"']/g, c => ({ '&':'&amp;', '<':'&lt;', '>':'&gt;', '"':'&quot;', "'":'&#39;' }[c]));
+}
+
+// ── accounts ──
+function userFromJwt(token) {
+  try {
+    const b64 = token.split('.')[1].replace(/-/g, '+').replace(/_/g, '/');
+    const p = JSON.parse(new TextDecoder().decode(Uint8Array.from(atob(b64), c => c.charCodeAt(0))));
+    const email = p.email || '', anon = !!p.is_anonymous;
+    const name = (p.user_metadata && p.user_metadata.name) || (anon ? 'Guest ' + String(p.sub).slice(0, 4).toUpperCase() : (email.split('@')[0] || 'Viewer'));
+    return { id: p.sub, email, name, anon };
+  } catch (e) { return null; }
+}
+function computeAuth() {
+  currentUser = session ? userFromJwt(session.access_token) : null;
+  if (CLOUD) isAdmin = !!(currentUser && ADMIN_EMAILS.map(x => x.toLowerCase()).includes((currentUser.email || '').toLowerCase()));
+}
+function applyAuthState() { computeAuth(); updateAuthUI(); updateAdminUI(); }
+function updateAuthUI() {
+  const a = document.getElementById('auth-btn'), o = document.getElementById('signout-btn');
+  if (!a) return;
+  if (!CLOUD) { a.style.display = 'none'; o.style.display = 'none'; return; }
+  a.style.display = '';
+  if (currentUser && !currentUser.anon) { a.textContent = '👤 ' + currentUser.name; a.title = currentUser.email; o.style.display = ''; }
+  else { a.textContent = '👤 Sign in'; a.title = ''; o.style.display = 'none'; }
+}
+function onAuthBtn() { if (currentUser && !currentUser.anon) showPage('mylist'); else openAuthModal('signin'); }
+// No sign-in needed: the first time someone rates or saves, they silently get a private guest account
+// (Supabase "anonymous sign-ins"). If that switch is off in Supabase, fall back to the sign-in form.
+async function ensureViewer() {
+  if (!CLOUD || currentUser) return true;
+  try {
+    const res = await fetch(`${SUPABASE_URL}/auth/v1/signup`, { method: 'POST', headers: sbHeaders(false), body: JSON.stringify({}) });
+    const d = await res.json().catch(() => ({}));
+    if (!res.ok || !d.access_token) throw new Error(d.msg || d.error_description || 'Guest access is off');
+    saveSession(d); computeAuth(); updateAuthUI();
+    return true;
+  } catch (e) {
+    console.warn('Guest session failed:', e);
+    openAuthModal('signin', 'Sign in to rate movies and save a watchlist');
+    return false;
+  }
+}
+
+let authMode = 'signin';
+function openAuthModal(mode, msg) {
+  switchAuthTab(mode || 'signin');
+  document.getElementById('auth-sub').textContent = msg || 'Optional – sign in to keep your ratings and watchlist on every device.';
+  document.getElementById('auth-error').style.display = 'none';
+  document.getElementById('auth-password').value = '';
+  document.getElementById('auth-modal').classList.add('open');
+  setTimeout(() => document.getElementById('auth-email').focus(), 80);
+}
+function closeAuthModal() { document.getElementById('auth-modal').classList.remove('open'); }
+function switchAuthTab(mode) {
+  authMode = mode;
+  document.getElementById('auth-tab-signin').classList.toggle('active', mode === 'signin');
+  document.getElementById('auth-tab-signup').classList.toggle('active', mode === 'signup');
+  document.getElementById('auth-name').style.display = mode === 'signup' ? '' : 'none';
+  document.getElementById('auth-submit').textContent = mode === 'signup' ? 'Create account' : 'Sign in';
+  document.getElementById('auth-password').autocomplete = mode === 'signup' ? 'new-password' : 'current-password';
+}
+function authError(msg) { const e = document.getElementById('auth-error'); e.textContent = msg; e.style.display = 'block'; }
+async function submitAuth() {
+  const email = document.getElementById('auth-email').value.trim();
+  const password = document.getElementById('auth-password').value;
+  const name = document.getElementById('auth-name').value.trim();
+  if (!email || !password) { authError('❌ Enter your email and password'); return; }
+  if (authMode === 'signup' && password.length < 6) { authError('❌ Password must be at least 6 characters'); return; }
+  const btn = document.getElementById('auth-submit'); btn.disabled = true;
+  try {
+    if (authMode === 'signup') {
+      const res = await fetch(`${SUPABASE_URL}/auth/v1/signup`, { method: 'POST', headers: sbHeaders(false),
+        body: JSON.stringify({ email, password, data: { name: name || email.split('@')[0] } }) });
+      const d = await res.json().catch(() => ({}));
+      if (!res.ok) throw new Error(d.msg || d.error_description || d.message || 'Could not create account');
+      if (!d.access_token) {           // email confirmation is switched on in Supabase
+        switchAuthTab('signin');
+        authError('✅ Account created! Check your email to confirm it, then sign in.');
+        document.getElementById('auth-error').style.color = 'var(--bat)';
+        return;
+      }
+      saveSession(d);
+    } else {
+      await authRequest('password', { email, password });
+    }
+    closeAuthModal();
+    applyAuthState();
+    await Promise.all([loadWatchlist(), loadRatings()]);
+    refreshAll();
+    showToast('🦇 Welcome, ' + (currentUser ? currentUser.name : 'viewer') + '!');
+  } catch (e) {
+    document.getElementById('auth-error').style.color = '#ff5533';
+    authError('❌ ' + (e.message || 'Sign-in failed'));
+  } finally { btn.disabled = false; }
+}
+function signOut() {
+  clearSession();
+  myList = [];
+  applyAuthState();
+  if (currentPage === 'mylist') renderMyList();
+  refreshAll();
+  showToast('Signed out');
+}
+function refreshAll() {
+  renderHome();
+  refreshCurrentPage(true);
+  if (detailId) { renderCommunity(detailId); updateDetailListBtn(); }
+}
+
+// ── community ratings (everyone can read; each signed-in viewer sets their own) ──
+let ratingsByMovie = {};          // movieId -> [{user_id, user_name, rating}]
+function myId() { return CLOUD ? (currentUser && currentUser.id) : 'local'; }
+async function loadRatings() {
+  ratingsByMovie = {};
+  if (!CLOUD) {
+    try { Object.entries(JSON.parse(localStorage.getItem('gs_ratings') || '{}')).forEach(([id, r]) => { ratingsByMovie[id] = [{ user_id: 'local', user_name: 'You', rating: r }]; }); } catch (e) {}
+    return;
+  }
+  try {
+    for (let off = 0; off < 50000; off += 1000) {
+      const rows = await sbRequest(`/rest/v1/ratings?select=user_id,movie_id,rating,user_name&order=movie_id.asc,user_id.asc&limit=1000&offset=${off}`);
+      (rows || []).forEach(r => (ratingsByMovie[r.movie_id] = ratingsByMovie[r.movie_id] || []).push(r));
+      if (!rows || rows.length < 1000) break;
+    }
+  } catch (e) { console.warn('Could not load ratings:', e); }
+}
+async function refreshMovieRatings(id) {
+  if (!CLOUD) return;
+  try {
+    const rows = await sbRequest(`/rest/v1/ratings?movie_id=eq.${id}&select=user_id,movie_id,rating,user_name`);
+    ratingsByMovie[id] = rows || [];
+    if (detailId === id) renderCommunity(id);
+  } catch (e) {}
+}
+function ratingStats(id) {
+  const l = ratingsByMovie[id] || [];
+  return { count: l.length, avg: l.length ? l.reduce((a, r) => a + r.rating, 0) / l.length : 0 };
+}
+function effRating(m) { const st = ratingStats(m.id); return st.count ? st.avg : (m.rating || 0); }
+function fmtRating(v) { return (Math.round(v * 10) / 10).toString(); }
+function cardStars(m, style) {
+  const v = effRating(m); if (!v) return '';
+  const r = Math.round(v), n = ratingStats(m.id).count;
+  return `<div class="card-stars"${style ? ` style="${style}"` : ''}>${'★'.repeat(r)}${'☆'.repeat(10 - r)} <span style="letter-spacing:0;color:var(--muted)">${fmtRating(v)}${n ? ` (${n})` : ''}</span></div>`;
+}
+function renderCommunity(id) {
+  const el = document.getElementById('detail-community');
+  if (!el || detailId !== id) return;
+  const st = ratingStats(id), list = (ratingsByMovie[id] || []).slice().sort((a, b) => b.rating - a.rating);
+  const mine = list.find(r => r.user_id === myId());
+  const stars = Array.from({ length: 10 }, (_, i) => `<button class="rate-star${mine && mine.rating >= i + 1 ? ' on' : ''}" onclick="rateMovie(${id},${i + 1})" title="${i + 1}/10">★</button>`).join('');
+  const needSign = false;
+  el.innerHTML = `<div class="comm-box">
+    <div class="comm-head">
+      ${st.count ? `<span class="comm-avg">★ ${fmtRating(st.avg)}</span><span class="comm-sub">/ 10 · ${st.count} rating${st.count !== 1 ? 's' : ''} from viewers</span>` : `<span class="comm-sub">No viewer ratings yet – be the first!</span>`}
+    </div>
+    <div class="comm-label">${needSign ? 'Sign in to rate' : mine ? `Your rating: ${mine.rating}/10 (tap the same star to remove)` : 'Rate this title'}</div>
+    <div class="rate-stars" ${needSign ? `onclick="openAuthModal('signin','Sign in to rate movies')"` : ''}>${stars}</div>
+    ${list.length ? `<div class="comm-list">${list.map(r => `<span class="comm-chip${r.user_id === myId() ? ' me' : ''}">${esc(r.user_id === myId() ? 'You' : (r.user_name || 'Viewer'))} · <b>★ ${r.rating}</b></span>`).join('')}</div>` : ''}
+  </div>`;
+}
+async function rateMovie(id, val) {
+  if (!(await ensureViewer())) return;
+  const uid = myId(), name = CLOUD ? currentUser.name : 'You';
+  const list = ratingsByMovie[id] = ratingsByMovie[id] || [];
+  const idx = list.findIndex(r => r.user_id === uid);
+  const remove = idx >= 0 && list[idx].rating === val;
+  if (remove) list.splice(idx, 1); else if (idx >= 0) list[idx].rating = val; else list.push({ user_id: uid, user_name: name, movie_id: id, rating: val });
+  renderCommunity(id);
+  try {
+    if (CLOUD) {
+      if (remove) await sbRequest(`/rest/v1/ratings?movie_id=eq.${id}&user_id=eq.${uid}`, { method: 'DELETE' }, true);
+      else await sbRequest('/rest/v1/ratings?on_conflict=user_id,movie_id', {
+        method: 'POST', headers: { 'Prefer': 'resolution=merge-duplicates,return=minimal' },
+        body: JSON.stringify({ user_id: uid, movie_id: id, rating: val, user_name: name, updated_at: new Date().toISOString() })
+      }, true);
+    } else {
+      const mine = {}; Object.entries(ratingsByMovie).forEach(([k, l]) => { const r = l.find(x => x.user_id === 'local'); if (r) mine[k] = r.rating; });
+      localStorage.setItem('gs_ratings', JSON.stringify(mine));
+    }
+    showToast(remove ? 'Rating removed' : `⭐ You rated it ${val}/10`);
+  } catch (e) {
+    console.error(e);
+    showToast(e.status === 401 ? '⚠ Session expired – sign in again' : '⚠ Could not save your rating');
+    await loadRatings(); renderCommunity(id);
+  }
+}
+
+// ── private watchlist (RLS in Supabase makes each row visible only to its owner) ──
+let myList = [];                  // [{id, movie_id, custom_title, category}]
+let mlFilter = 'all';
+function persistLocalList() { try { localStorage.setItem('gs_watchlist', JSON.stringify(myList)); } catch (e) {} }
+async function loadWatchlist() {
+  if (!CLOUD) { try { myList = JSON.parse(localStorage.getItem('gs_watchlist') || '[]'); } catch (e) { myList = []; } return; }
+  if (!currentUser) { myList = []; return; }
+  try { myList = (await sbRequest('/rest/v1/watchlist?select=id,movie_id,custom_title,category&order=created_at.desc', {}, true)) || []; }
+  catch (e) { console.warn('Could not load watchlist:', e); myList = []; }
+}
+function inList(movieId) { return myList.some(x => x.movie_id === movieId); }
+function listBtn(m, compact) {
+  const on = inList(m.id);
+  return `<button class="card-btn${on ? ' on' : ''}" onclick="toggleList(${m.id})" title="${on ? 'Remove from my watchlist' : 'Add to my watchlist'}">${compact ? '🔖' : (on ? '🔖 Saved' : '＋ List')}</button>`;
+}
+function afterListChange() {
+  refreshCurrentPage(currentPage === 'mylist');
+  if (isCatPage(currentPage)) buildGrid(currentPage);
+  if (detailId) updateDetailListBtn();
+}
+async function toggleList(movieId) {
+  if (!(await ensureViewer())) return;
+  const m = items.find(x => x.id === movieId); if (!m) return;
+  const ex = myList.find(x => x.movie_id === movieId);
+  if (ex) { await removeListRow(ex.id); return; }
+  try {
+    if (CLOUD) {
+      const res = await sbRequest('/rest/v1/watchlist', { method: 'POST', headers: { 'Prefer': 'return=representation' },
+        body: JSON.stringify({ user_id: currentUser.id, movie_id: movieId, category: m.category }) }, true);
+      myList.unshift(res[0]);
+    } else { myList.unshift({ id: 'l' + Date.now(), movie_id: movieId, category: m.category }); persistLocalList(); }
+    showToast('🔖 Added to your watchlist');
+  } catch (e) { console.error(e); showToast('⚠ Could not update watchlist'); await loadWatchlist(); }
+  afterListChange();
+}
+async function removeListRow(rowId) {
+  const ex = myList.find(x => String(x.id) === String(rowId)); if (!ex) return;
+  myList = myList.filter(x => x !== ex);
+  try {
+    if (CLOUD) await sbRequest(`/rest/v1/watchlist?id=eq.${encodeURIComponent(rowId)}`, { method: 'DELETE' }, true);
+    else persistLocalList();
+    showToast('Removed from your watchlist');
+  } catch (e) { console.error(e); showToast('⚠ Could not remove it'); await loadWatchlist(); }
+  afterListChange();
+}
+async function addCustomToList() {
+  if (!(await ensureViewer())) return;
+  const inp = document.getElementById('ml-title');
+  const title = inp.value.trim(); if (!title) { showToast('Type a title first!'); return; }
+  const category = document.getElementById('ml-cat').value;
+  try {
+    if (CLOUD) {
+      const res = await sbRequest('/rest/v1/watchlist', { method: 'POST', headers: { 'Prefer': 'return=representation' },
+        body: JSON.stringify({ user_id: currentUser.id, custom_title: title.slice(0, 120), category }) }, true);
+      myList.unshift(res[0]);
+    } else { myList.unshift({ id: 'l' + Date.now(), custom_title: title.slice(0, 120), category }); persistLocalList(); }
+    showToast('🔖 Saved to your list');
+  } catch (e) { console.error(e); showToast('⚠ Could not save'); }
+  renderMyList();
+}
+function setMlFilter(f) { mlFilter = f; renderMyList(); }
+function goAddToList(cat) {
+  mlFilter = cat; showPage('mylist');
+  setTimeout(() => { const i = document.getElementById('ml-title'); if (i) { i.focus(); i.scrollIntoView({ block: 'center' }); } }, 120);
+}
+async function addSearchToList(cat) {
+  const el = document.querySelector(`#ctrl-${cat} .search-input`);
+  const title = el ? el.value.trim() : ''; if (!title) return;
+  if (!(await ensureViewer())) return;
+  try {
+    if (CLOUD) {
+      const res = await sbRequest('/rest/v1/watchlist', { method: 'POST', headers: { 'Prefer': 'return=representation' },
+        body: JSON.stringify({ user_id: currentUser.id, custom_title: title.slice(0, 120), category: cat }) }, true);
+      myList.unshift(res[0]);
+    } else { myList.unshift({ id: 'l' + Date.now(), custom_title: title.slice(0, 120), category: cat }); persistLocalList(); }
+    showToast('🔖 Saved to your watchlist');
+  } catch (e) { console.error(e); showToast('⚠ Could not save'); }
+}
+function detailToggleList() { if (detailId) toggleList(detailId); }
+function updateDetailListBtn() {
+  const b = document.getElementById('detail-list-btn'); if (!b || !detailId) return;
+  const on = inList(detailId);
+  b.classList.toggle('on', on);
+  b.textContent = on ? '🔖 On My Watchlist' : '🔖 Add to My Watchlist';
+}
+function renderMyList() {
+  const pg = document.getElementById('page-mylist'); if (!pg) return;
+  const hero = `<div class="catalog-hero" style="position:relative">
+    <button class="back-home-btn" onclick="showPage('home')" style="position:static;margin-bottom:14px">← HOME</button>
+    <div class="catalog-hero-title">🔖 My <span>Watchlist</span></div>
+    <div class="catalog-hero-sub">🔒 Private – only you can see this list</div>${currentUser&&!currentUser.anon?`<button class="btn btn-ghost" style="margin-top:14px" onclick="signOut()">Sign out (${esc(currentUser.name)})</button>`:''}</div>`;
+  const entries = myList.map(r => ({ row: r, movie: r.movie_id != null ? items.find(x => x.id === r.movie_id) : null }))
+                        .filter(e => e.row.movie_id == null || e.movie);
+  const catOf = e => e.movie ? e.movie.category : (CATS[e.row.category] ? e.row.category : 'other');
+  const counts = {}; entries.forEach(e => { const c = catOf(e); counts[c] = (counts[c] || 0) + 1; });
+  const catOpts = Object.entries(CATS).map(([k, v]) => `<option value="${k}"${mlFilter === k ? ' selected' : ''}>${v.emoji} ${catFull(k)}</option>`).join('');
+  const chips = `<button class="ml-chip${mlFilter === 'all' ? ' active' : ''}" onclick="setMlFilter('all')">All · ${entries.length}</button>` +
+    Object.keys(CATS).filter(k => counts[k]).map(k => `<button class="ml-chip${mlFilter === k ? ' active' : ''}" onclick="setMlFilter('${k}')">${CATS[k].emoji} ${CATS[k].industry||CATS[k].label} · ${counts[k]}</button>`).join('');
+  const sections = Object.keys(CATS).filter(k => counts[k] && (mlFilter === 'all' || mlFilter === k)).map(k => {
+    const es = entries.filter(e => catOf(e) === k), movies = es.filter(e => e.movie), customs = es.filter(e => !e.movie);
+    const grid = movies.length ? `<div class="grid">${movies.map((e, i) => k === 'series' ? seriesCard(e.movie, i, CATS[k].color) : movieCard(e.movie, i, CATS[k].color)).join('')}</div>` : '';
+    const cust = customs.length ? `<div class="ml-custom">${customs.map(e => `<div class="ml-custom-row"><span>✎ ${esc(e.row.custom_title)}</span><button onclick="removeListRow('${esc(e.row.id)}')" title="Remove">✕</button></div>`).join('')}</div>` : '';
+    return `<div class="ml-section"><div class="section-header"><div class="section-title">${CATS[k].emoji} ${catFull(k)}</div><div class="section-count">${es.length} saved</div></div>${grid}${cust}</div>`;
+  }).join('');
+  const guestNote = (CLOUD && (!currentUser || currentUser.anon))
+    ? `<div style="margin:0 2rem 1rem;font-size:12px;color:var(--muted);font-weight:600">💾 Saved privately on this device. <a href="#" onclick="openAuthModal('signin');return false" style="color:var(--bat)">Sign in</a> to keep it on every device.</div>` : '';
+  pg.innerHTML = hero + guestNote + `
+    <div class="ml-add">
+      <input id="ml-title" class="form-input" maxlength="120" placeholder="Add any title you want to watch…" style="flex:1 1 100%" onkeydown="if(event.key==='Enter')addCustomToList()">
+      <select id="ml-cat" class="form-select" style="flex:1;min-width:140px">${catOpts}</select>
+      <button class="btn btn-bat" onclick="addCustomToList()">+ Add</button>
+    </div>
+    ${entries.length ? `<div class="ml-chips">${chips}</div>${sections}` : `<div class="section"><div class="grid"><div class="empty-state"><span class="empty-icon">🔖</span><h3>Your watchlist is empty</h3><p>Type a title above, or tap “＋ List” on any movie in any category.</p></div></div></div>`}`;
 }
 
 // ── TOAST ──
@@ -1765,10 +2182,11 @@ function showToast(msg) {
 
 // ── KEYBOARD ──
 document.addEventListener('keydown', e => {
-  if (e.key==='Escape') { if (document.getElementById('detail-page').classList.contains('open')) closeDetailPage(); closeModal(); closeConfirm(); }
+  if (e.key==='Escape') { if (document.getElementById('detail-page').classList.contains('open')) closeDetailPage(); closeModal(); closeConfirm(); closeAuthModal(); }
 });
 document.getElementById('add-modal').addEventListener('click', function(e) { if (e.target===this) closeModal(); });
 document.getElementById('confirm-dialog').addEventListener('click', function(e) { if (e.target===this) closeConfirm(); });
+document.getElementById('auth-modal').addEventListener('click', function(e) { if (e.target===this) closeAuthModal(); });
 
 // ── UTIL ──
 function hexToRgba(hex, alpha) {
@@ -1835,6 +2253,7 @@ function importData(input) {
   renderHome();
   renderQuickPanel();
   syncAdminButton();
+  updateAuthUI();
   if (isAdmin) updateAdminUI();
 })();
 </script>
